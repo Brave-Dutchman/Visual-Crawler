@@ -51,7 +51,7 @@ namespace Backgroud_Crawler
                     using (Stream streamResponse = myWebResponse.GetResponseStream())
                     {
                         string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
-                        Console.WriteLine($"{_number}:{level}:{myWebResponse.ResponseUri}\n");
+                        Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
 
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
@@ -79,7 +79,7 @@ namespace Backgroud_Crawler
             }
             catch (Exception e)
             {
-                Console.WriteLine($"\t{webUrl}:{e.Message}");
+                Console.WriteLine(String.Format("\t{0}:{1}", webUrl, e.Message));
             }
         }
 

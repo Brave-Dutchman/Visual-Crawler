@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Backgroud_Crawler
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
         }
     }

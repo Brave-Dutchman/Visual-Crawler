@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Backgroud_Crawler
 {
     public class WebCrawler
     {
-        private const string StartUrl = "http://www.insidegamer.nl/";
+        private const string StartUrl = "https://github.com/";
         
         private readonly int _number;
 
         private readonly List<string> _links;
         private readonly List<ALink> _foundText;
+
+        PerformanceCounter cpuCounter;
+        PerformanceCounter ramCounter;
 
         public WebCrawler(int number)
         {
@@ -21,7 +25,24 @@ namespace Backgroud_Crawler
 
             _links = new List<string>();
             _foundText = new List<ALink>();
+
+            cpuCounter = new PerformanceCounter();
+            cpuCounter.CategoryName = "Processor";
+            cpuCounter.CounterName = "% Processor Time";
+            cpuCounter.InstanceName = "_Total";
+
+            ramCounter = new PerformanceCounter("Memory", "Available MBytes");
         }
+
+        public string getCurrentCpuUsage()
+        {
+            return cpuCounter.NextValue() + "%";
+        }
+
+        public string getAvailableRAM()
+        {
+            return ramCounter.NextValue() + "MB";
+        } 
 
         public void Run()
         {
@@ -52,7 +73,7 @@ namespace Backgroud_Crawler
                     {
                         string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
                         Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
-
+                        Console.WriteLine(String.Format("CPU usage:{0}", getCurrentCpuUsage()));
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
                             string content = sreader.ReadToEnd(); //reads it to the end

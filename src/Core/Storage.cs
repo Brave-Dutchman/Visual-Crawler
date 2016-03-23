@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 
@@ -18,6 +19,7 @@ namespace Core
                 CreateDatabaseFile();
             }
             _dbConnection = new SQLiteConnection(string.Format("Data Source={0};Version=3", DB_FILE));
+            _dbConnection.Open();
             CheckCreateTable(LINKNAME, 0);
             CheckCreateTable(CRAWLEDLINKNAME, 1);
         }
@@ -31,9 +33,9 @@ namespace Core
 
         private static bool CheckCreateTable(string tablename, int type)
         {
-            try
+            //try
             {
-                _dbConnection.Open();
+                
                 string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';",
                     tablename);
                 SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
@@ -48,7 +50,7 @@ namespace Core
                     }
                     else if (type == 1) //CrawledLink
                     {
-                        sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255);", tablename);
+                        sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255));", tablename);
                     }
                     else
                     {
@@ -57,14 +59,46 @@ namespace Core
 
                     command = new SQLiteCommand(sql, _dbConnection);
                     command.ExecuteNonQuery();
-                    _dbConnection.Close();
+                    
                 }
+             
             }
-            catch
+            //catch
             {
-                return false;
+                //return false;
             }
             return true;
+        }
+
+        public static void WriteLinks(List<Link> links)
+        {
+            foreach (Link link in links)
+            {
+                WriteRow(link);
+            }
+        }
+
+        private static void WriteRow(object item)
+        {           
+            if (item.GetType() == typeof (Link) || item.GetType() == typeof (CrawledLink))
+            {
+                string sql = string.Empty;
+                if (item.GetType() == typeof (Link))
+                {
+                    Link link = (Link) item;
+                    sql = string.Format(
+                        "insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})", LINKNAME, link.Host,
+                        link.From, link.To, link.TimesOnPage);
+                }
+                if (item.GetType() == typeof (CrawledLink))
+                {
+                    CrawledLink link = (CrawledLink) item;
+                    sql = string.Format(
+                        "insert into {0} (Link) values ({1})", CRAWLEDLINKNAME, link.Link);
+                }
+                SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
+                command.ExecuteNonQuery();
+            }         
         }
     }
 }

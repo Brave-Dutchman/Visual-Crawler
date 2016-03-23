@@ -74,31 +74,28 @@ namespace Core
         {
             foreach (Link link in links)
             {
-                WriteRow(link);
+                WriteRow(CreateLinkQuery(link));
             }
         }
 
-        private static void WriteRow(object item)
-        {           
-            if (item.GetType() == typeof (Link) || item.GetType() == typeof (CrawledLink))
-            {
-                string sql = string.Empty;
-                if (item.GetType() == typeof (Link))
-                {
-                    Link link = (Link) item;
-                    sql = string.Format(
-                        "insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})", LINKNAME, link.Host,
-                        link.From, link.To, link.TimesOnPage);
-                }
-                if (item.GetType() == typeof (CrawledLink))
-                {
-                    CrawledLink link = (CrawledLink) item;
-                    sql = string.Format(
+
+        private static string CreateLinkQuery(Link link)
+        {
+            return string.Format(
+                       "insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})", LINKNAME, link.Host,
+                       link.From, link.To, link.TimesOnPage);
+        }
+
+        private static string CreateCrawledLinkQuery(CrawledLink link)
+        {
+            return string.Format(
                         "insert into {0} (Link) values ({1})", CRAWLEDLINKNAME, link.Link);
-                }
+        }
+
+        private static void WriteRow(string sql)
+        {  
                 SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-                command.ExecuteNonQuery();
-            }         
+                command.ExecuteNonQuery();                   
         }
     }
 }

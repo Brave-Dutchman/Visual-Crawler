@@ -34,9 +34,9 @@ namespace Backgroud_Crawler
             ramCounter = new PerformanceCounter("Memory", "Available MBytes");
         }
 
-        public string getCurrentCpuUsage()
+        public float getCurrentCpuUsage()
         {
-            return cpuCounter.NextValue() + "%";
+            return cpuCounter.NextValue();
         }
 
         public string getAvailableRAM()
@@ -73,7 +73,13 @@ namespace Backgroud_Crawler
                     {
                         string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
                         Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
-                        Console.WriteLine(String.Format("CPU usage:{0}", getCurrentCpuUsage()));
+                        Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
+
+                        while (getCurrentCpuUsage() > 5)
+                        {
+                            Console.WriteLine("ermagherd high voltage!!!");
+                        }
+
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
                             string content = sreader.ReadToEnd(); //reads it to the end

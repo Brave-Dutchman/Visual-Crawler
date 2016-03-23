@@ -69,6 +69,7 @@
     <Compile Include="DispalyValue.xaml.cs">
       <DependentUpon>DispalyValue.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LinkedNode.cs" />
     <Compile Include="ParentChild.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="VisualLink.xaml.cs">

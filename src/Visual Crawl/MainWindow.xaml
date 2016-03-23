@@ -3,10 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Visual_Crawl"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        xmlns:local="clr-namespace:Visual_Crawl" mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="500" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+
     <Grid>
+        <local:DispalyValue x:Name="Display" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Loaded="FrameworkElement_OnLoaded">
+            <Canvas x:Name="Field" Width="2000" Height="2000"/>
+        </ScrollViewer>
     </Grid>
 </Window>

@@ -16,11 +16,17 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
+            foreach (var item in WebCrawlers)
+            {
+                 Task.Run(() => { item.Run(); });
+            }
+            /*
             for (int i = 0; i < 1; i++)
             {
                 int index = i;
                 Task.Run(() => { WebCrawlers[index].Run(); });
             }
+            */
         }
 
         public void Stop()

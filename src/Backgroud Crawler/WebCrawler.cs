@@ -64,15 +64,15 @@ namespace Backgroud_Crawler
 
         private void Crawler(string webUrl, int level)
         {
-            if (getCurrentCpuUsage() < 10)
+            if (getCurrentCpuUsage() < 25)
             {
                 try
                 {
                     WebRequest myWebRequest = WebRequest.Create(webUrl);
-                    if (getCurrentCpuUsage() < 10) { 
+                    if (getCurrentCpuUsage() < 25) { 
                         using (WebResponse myWebResponse = myWebRequest.GetResponse())
                         {
-                            if (getCurrentCpuUsage() < 10) { 
+                            if (getCurrentCpuUsage() < 25) { 
                                 using (Stream streamResponse = myWebResponse.GetResponseStream())
                                 {
                                     string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;

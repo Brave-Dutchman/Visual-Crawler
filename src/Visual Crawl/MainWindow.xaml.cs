@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +21,7 @@ namespace Visual_Crawl
         private const double LeftStart = 0;
         private const double DefaultLeftMargin = 250;
 
+        private LinkedNode RootNode { get; set; }
         public List<VisualLink> Links { get; set; }
 
         public MainWindow()
@@ -45,8 +47,8 @@ namespace Visual_Crawl
             List<ParentChild> nodes = new List<ParentChild>();
 
             //The root object
-            AddLinks(Links[0], TopStart);
-            nodes.Add(new ParentChild(Links[0], null));
+            //TODO AddLinks(Links[0], TopStart);
+            nodes.Add(new ParentChild(null, Links[0]));
 
             foreach (VisualLink visualLink in Links)
             {
@@ -60,10 +62,39 @@ namespace Visual_Crawl
                 foreach (VisualLink foundLinks in arr)
                 {
                     nodes.Add(new ParentChild(visualLink, foundLinks));
-                    AddLinks(foundLinks, top, left);
+
+                    //TODO AddLinks(foundLinks, top, left);
                     left += DefaultLeftMargin;
                 }
             }
+
+            List<LinkedNode> linkedNodes = new List<LinkedNode>();
+
+            foreach (ParentChild parentChild in nodes)
+            {
+                linkedNodes.Add(new LinkedNode(parentChild.VisualLink));
+            }
+
+            foreach (LinkedNode linkedNode in linkedNodes)
+            {
+                ParentChild parentChild = nodes.FirstOrDefault(x => x.VisualLink != null && Equals(x.VisualLink, linkedNode.Data));
+
+                if (parentChild != null)
+                {
+                    VisualLink parent = parentChild.Parent;
+
+                    foreach (LinkedNode node in linkedNodes)
+                    {
+                        if (Equals(node.Data, parent))
+                        {
+                            node.LinkedNodes.Add(linkedNode);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            RootNode = linkedNodes[0];
         }
 
         private void AddLinks(VisualLink visual, double top, double left = 0)

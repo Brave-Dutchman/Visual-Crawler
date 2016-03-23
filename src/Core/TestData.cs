@@ -9,6 +9,8 @@ namespace Core
             List<Link> links = new List<Link>();
 
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/"));
+
+
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/game/"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/archief/"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/videos/"));
@@ -20,6 +22,9 @@ namespace Core
 
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/archief/", "http://insidegamer.nl/archief/random1/"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/archief/", "http://insidegamer.nl/archief/random2/"));
+
+            links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/archief/random1/", "http://insidegamer.nl/archief/random1/ddddd"));
+            links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/archief/random1/", "http://insidegamer.nl/archief/random2/ccccc"));
 
             return links;
         }

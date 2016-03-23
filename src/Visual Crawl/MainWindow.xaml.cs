@@ -36,12 +36,15 @@ namespace Visual_Crawl
         {
             Links = TestData.GetTestData();
 
-            LinkNode start = new LinkNode(Links[0]);
-            start.Nodes = GetByFrom(start.Link.To);
+            LinkNode node = new LinkNode(Links[0]);
+            node.Nodes = GetByFrom(node.Link.To);
 
+            foreach (LinkNode linkNode in node.Nodes)
+            {
+                linkNode.Nodes = GetByFrom(linkNode.Link.To);
+            }
 
- 
-            PlaceOnField();
+            //PlaceOnField();
         }
 
         private void PlaceOnField()

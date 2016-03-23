@@ -42,8 +42,11 @@ namespace Visual_Crawl
 
         private void PlaceOnField()
         {
-            //Place the root
+            List<ParentChild> nodes = new List<ParentChild>();
+
+            //The root object
             AddLinks(Links[0], TopStart);
+            nodes.Add(new ParentChild(Links[0], null));
 
             foreach (VisualLink visualLink in Links)
             {
@@ -56,18 +59,11 @@ namespace Visual_Crawl
                 //place all connected on the field
                 foreach (VisualLink foundLinks in arr)
                 {
+                    nodes.Add(new ParentChild(visualLink, foundLinks));
                     AddLinks(foundLinks, top, left);
                     left += DefaultLeftMargin;
                 }
             }
-
-            //AddLinks(Links[1], 200, -375);
-            //AddLinks(Links[2], 200, -125);
-            //AddLinks(Links[3], 200, 125);
-            //AddLinks(Links[4], 200, 375);
-
-            //AddLinks(Links[5], 350, -125);
-            //AddLinks(Links[6], 350, 125);
         }
 
         private void AddLinks(VisualLink visual, double top, double left = 0)

@@ -76,5 +76,10 @@ namespace Visual_Crawl
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public override string ToString()
+        {
+            return Link.To;
+        }
     }
 }

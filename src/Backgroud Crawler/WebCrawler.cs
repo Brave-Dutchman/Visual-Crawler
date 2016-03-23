@@ -64,20 +64,22 @@ namespace Backgroud_Crawler
 
         private void Crawler(string webUrl, int level)
         {
-            if (getCurrentCpuUsage() < 25)
+            if (getCurrentCpuUsage() < 100)
             {
                 try
                 {
                     WebRequest myWebRequest = WebRequest.Create(webUrl);
-                    if (getCurrentCpuUsage() < 25) { 
+                    if (getCurrentCpuUsage() < 100) { 
                         using (WebResponse myWebResponse = myWebRequest.GetResponse())
                         {
-                            if (getCurrentCpuUsage() < 25) { 
+                            if (getCurrentCpuUsage() < 100)
+                            { 
                                 using (Stream streamResponse = myWebResponse.GetResponseStream())
                                 {
                                     string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
                                     Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
                                     Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
+                                    Console.WriteLine(String.Format("Available RAM: {0}", getAvailableRAM()));
 
                                     using (StreamReader sreader = new StreamReader(streamResponse))
                                     {

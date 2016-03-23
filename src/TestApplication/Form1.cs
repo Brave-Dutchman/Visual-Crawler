@@ -20,7 +20,7 @@ namespace TestApplication
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Storage.Connect("test.sqlite");
+            Storage.Connect();
         }
     }
 }

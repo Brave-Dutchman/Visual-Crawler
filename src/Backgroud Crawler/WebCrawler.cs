@@ -64,38 +64,42 @@ namespace Backgroud_Crawler
 
         private void Crawler(string webUrl, int level)
         {
-            if (getCurrentCpuUsage() < 5)
+            if (getCurrentCpuUsage() < 10)
             {
                 try
                 {
                     WebRequest myWebRequest = WebRequest.Create(webUrl);
-                    using (WebResponse myWebResponse = myWebRequest.GetResponse())
-                    {
-                        using (Stream streamResponse = myWebResponse.GetResponseStream())
+                    if (getCurrentCpuUsage() < 10) { 
+                        using (WebResponse myWebResponse = myWebRequest.GetResponse())
                         {
-                            string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
-                            Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
-                            Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
-
-                            using (StreamReader sreader = new StreamReader(streamResponse))
-                            {
-                                string content = sreader.ReadToEnd(); //reads it to the end
-                                Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
-
-                                foreach (object match in regexLink.Matches(content))
+                            if (getCurrentCpuUsage() < 10) { 
+                                using (Stream streamResponse = myWebResponse.GetResponseStream())
                                 {
-                                    string url = match.ToString();
-                                    if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
+                                    string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
+                                    Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
+                                    Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
 
-                                    if (!url.StartsWith("http"))
+                                    using (StreamReader sreader = new StreamReader(streamResponse))
                                     {
-                                        url = header + url;
+                                        string content = sreader.ReadToEnd(); //reads it to the end
+                                        Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
+
+                                        foreach (object match in regexLink.Matches(content))
+                                        {
+                                            string url = match.ToString();
+                                            if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
+
+                                            if (!url.StartsWith("http"))
+                                            {
+                                                url = header + url;
+                                            }
+
+                                            if (_links.Contains(url)) continue;
+
+                                            _foundText.Add(new ALink(level + 1, url));
+                                            _links.Add(url);
+                                        }
                                     }
-
-                                    if (_links.Contains(url)) continue;
-
-                                    _foundText.Add(new ALink(level + 1, url));
-                                    _links.Add(url);
                                 }
                             }
                         }

@@ -18,6 +18,7 @@ namespace Backgroud_Crawler
 
         PerformanceCounter cpuCounter;
         PerformanceCounter ramCounter;
+        ProcessThreadCollection currentThreads;
 
         public WebCrawler(int number)
         {
@@ -42,7 +43,19 @@ namespace Backgroud_Crawler
         public string getAvailableRAM()
         {
             return ramCounter.NextValue() + "MB";
-        } 
+        }
+
+        public int calculateAmountOfThreads()
+        {
+            int counter = 0;
+            currentThreads = Process.GetCurrentProcess().Threads;
+
+            foreach (ProcessThread thread in currentThreads)
+            {
+                counter++;
+            }
+            return counter;
+        }
 
         public void Run()
         {
@@ -80,6 +93,7 @@ namespace Backgroud_Crawler
                                     Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
                                     Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
                                     Console.WriteLine(String.Format("Available RAM: {0}", getAvailableRAM()));
+                                    Console.WriteLine(String.Format("Amount of threads: {0}", calculateAmountOfThreads()));
 
                                     using (StreamReader sreader = new StreamReader(streamResponse))
                                     {

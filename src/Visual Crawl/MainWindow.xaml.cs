@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,54 +21,49 @@ namespace Visual_Crawl
         private const double LeftStart = 0;
         private const double DefaultLeftMargin = 250;
 
-        public List<VisualLink> Links { get; set; }
+
+        public List<Link> Links { get; set; }
+
+        public List<VisualLink> VisualLinks { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            Links = new List<VisualLink>();
+            VisualLinks = new List<VisualLink>();
         }
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            List<Link> links = TestData.GetTestData();
+            Links = TestData.GetTestData();
 
-            Links.Add(new VisualLink(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/")));
-            foreach (Link link in links)
-            {
-                Links.Add(new VisualLink(link));
-            }
+            LinkNode start = new LinkNode(Links[0]);
+            start.Nodes = GetByFrom(start.Link.To);
 
+
+ 
             PlaceOnField();
         }
 
         private void PlaceOnField()
         {
-            //Place the root
-            AddLinks(Links[0], TopStart);
+            ////Place the root
+            //AddLinks(VisualLinks[0], TopStart);
 
-            foreach (VisualLink visualLink in Links)
-            {
-                //find al nodes connected to the root
-                VisualLink[] arr = GetByFrom(visualLink.Link.To);
-                double top = visualLink.Top + DefaultTopMargin;
-                double left = LeftStart;
 
-                //place all connected on the field
-                foreach (VisualLink foundLinks in arr)
-                {
-                    AddLinks(foundLinks, top, left);
-                    left += DefaultLeftMargin;
-                }
-            }
+            //foreach (VisualLink visualLink in VisualLinks)
+            //{
+            //    //Find all nodes connected to the root
+            //    VisualLink[] arr = GetByFrom(visualLink.Link.To);
+            //    double top = visualLink.Top + DefaultTopMargin;
+            //    double left = LeftStart;
 
-            //AddLinks(Links[1], 200, -375);
-            //AddLinks(Links[2], 200, -125);
-            //AddLinks(Links[3], 200, 125);
-            //AddLinks(Links[4], 200, 375);
-
-            //AddLinks(Links[5], 350, -125);
-            //AddLinks(Links[6], 350, 125);
+            //    //Place all connected on the field
+            //    foreach (VisualLink foundLinks in arr)
+            //    {
+            //        AddLinks(foundLinks, top, left);
+            //        left += DefaultLeftMargin;
+            //    }
+            //}
         }
 
         private void AddLinks(VisualLink visual, double top, double left = 0)
@@ -94,14 +90,14 @@ namespace Visual_Crawl
             Field.Children.Add(visual);
         }
 
-        private VisualLink[] GetByFrom(string link)
+        private LinkNode[] GetByFrom(string link)
         {
-            return Links.FindAll(x => x.Link.From == link && x.Link.To != link).ToArray();
+            return (from link1 in Links where link1.From == link && link1.To != link select new LinkNode(link1)).ToArray();
         }
 
         private VisualLink GetLinkByLink(string link)
         {
-            foreach (VisualLink visualLink in Links)
+            foreach (VisualLink visualLink in VisualLinks)
             {
                 if (visualLink.Link.To == link)
                 {

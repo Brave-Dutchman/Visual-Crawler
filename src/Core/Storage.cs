@@ -19,6 +19,7 @@ namespace Core
                 {
                     SQLiteConnection.CreateFile(filename);
                     Debug.WriteLine(string.Format("File {0} Created.", filename));
+
                 }
             _dbConnection = new SQLiteConnection(string.Format("Data Source={0};Version=4", filename));
         }

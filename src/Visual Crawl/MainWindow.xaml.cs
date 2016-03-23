@@ -22,10 +22,7 @@ namespace Visual_Crawl
         private const double DefaultLeftMargin = 250;
 
         private LinkedNode RootNode { get; set; }
-
         public List<VisualLink> Links { get; set; }
-
-        
 
         public MainWindow()
         {
@@ -50,7 +47,7 @@ namespace Visual_Crawl
             List<ParentChild> nodes = new List<ParentChild>();
 
             //The root object
-            AddLinks(Links[0], TopStart);
+            //TODO AddLinks(Links[0], TopStart);
             nodes.Add(new ParentChild(null, Links[0]));
 
             foreach (VisualLink visualLink in Links)
@@ -65,7 +62,8 @@ namespace Visual_Crawl
                 foreach (VisualLink foundLinks in arr)
                 {
                     nodes.Add(new ParentChild(visualLink, foundLinks));
-                    AddLinks(foundLinks, top, left);
+
+                    //TODO AddLinks(foundLinks, top, left);
                     left += DefaultLeftMargin;
                 }
             }

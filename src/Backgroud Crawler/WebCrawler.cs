@@ -64,49 +64,55 @@ namespace Backgroud_Crawler
 
         private void Crawler(string webUrl, int level)
         {
-            try
+            if (getCurrentCpuUsage() < 10)
             {
-                WebRequest myWebRequest = WebRequest.Create(webUrl);
-                using (WebResponse myWebResponse = myWebRequest.GetResponse())
+                try
                 {
-                    using (Stream streamResponse = myWebResponse.GetResponseStream())
-                    {
-                        string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
-                        Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
-                        Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
-
-                        while (getCurrentCpuUsage() > 5)
+                    WebRequest myWebRequest = WebRequest.Create(webUrl);
+                    if (getCurrentCpuUsage() < 10) { 
+                        using (WebResponse myWebResponse = myWebRequest.GetResponse())
                         {
-                            Console.WriteLine("ermagherd high voltage!!!");
-                        }
-
-                        using (StreamReader sreader = new StreamReader(streamResponse))
-                        {
-                            string content = sreader.ReadToEnd(); //reads it to the end
-                            Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
-
-                            foreach (object match in regexLink.Matches(content))
-                            {
-                                string url = match.ToString();
-                                if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
-
-                                if (!url.StartsWith("http"))
+                            if (getCurrentCpuUsage() < 10) { 
+                                using (Stream streamResponse = myWebResponse.GetResponseStream())
                                 {
-                                    url = header + url;
+                                    string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
+                                    Console.WriteLine(String.Format("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri));
+                                    Console.WriteLine(String.Format("CPU usage:{0}%", getCurrentCpuUsage()));
+
+                                    using (StreamReader sreader = new StreamReader(streamResponse))
+                                    {
+                                        string content = sreader.ReadToEnd(); //reads it to the end
+                                        Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
+
+                                        foreach (object match in regexLink.Matches(content))
+                                        {
+                                            string url = match.ToString();
+                                            if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
+
+                                            if (!url.StartsWith("http"))
+                                            {
+                                                url = header + url;
+                                            }
+
+                                            if (_links.Contains(url)) continue;
+
+                                            _foundText.Add(new ALink(level + 1, url));
+                                            _links.Add(url);
+                                        }
+                                    }
                                 }
-
-                                if (_links.Contains(url)) continue;
-
-                                _foundText.Add(new ALink(level + 1, url));
-                                _links.Add(url);
                             }
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(String.Format("\t{0}:{1}", webUrl, e.Message));
+                }
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(String.Format("\t{0}:{1}", webUrl, e.Message));
+                Console.WriteLine("Ermagherd high voltage! D: \n");
             }
         }
 

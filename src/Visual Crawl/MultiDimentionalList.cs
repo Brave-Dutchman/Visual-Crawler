@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Visual_Crawl
 {
@@ -18,76 +17,44 @@ namespace Visual_Crawl
             return _list;
         }
 
-        public List<ParentChild> GetByIndex(int index)
+        public bool Add(VisualLink parent, VisualLink child)
         {
-            return _list[index];
-        }
-
-        public List<List<ParentChildren>> GetParentChildrenList()
-        {
-            return _list.Select(GetNumbersList).ToList();
-        }
-
-        public int GetWightestChild()
-        {
-            int count = 0;
-
-            foreach (List<ParentChildren> list in GetParentChildrenList())
+            if (parent == null)
             {
-                foreach (ParentChildren children in list)
-                {
-                    if (children.VisualLinks.Count > count)
-                    {
-                        count = children.VisualLinks.Count;
-                    }
-                }
-            }
-
-            return count;
-        }
-
-        private List<ParentChildren> GetNumbersList(List<ParentChild> list)
-        {
-            List<ParentChildren> fors = new List<ParentChildren>();
-
-            foreach (ParentChild s in list)
-            {
-                ParentChildren obj = fors.FirstOrDefault(x => Equals(x.Parent, s.Parent));
-
-                if (obj == null)
-                {
-                    fors.Add(new ParentChildren(s.Parent, s.VisualLink));
-                }
-                else
-                {
-                    obj.VisualLinks.Add(s.VisualLink);
-                }
-            }
-
-            return fors; 
-        }
-
-        public bool Add(ParentChild child)
-        {
-            if (child.Parent == null)
-            {
-                AddRoot(child);
+                AddRoot(new ParentChild(null, child, 0));
                 return true;
             }
 
-            int index = GetParentIndex(child.Parent) + 1;
+            int index = GetParentListIndex(parent) + 1;
 
             try
             {
-                _list[index].Add(child);
+                _list[index].Add(new ParentChild(parent, child, GetParentCHildren(parent)));
             }
             catch (Exception)
             {
                 _list.Add(new List<ParentChild>());
-                _list[index].Add(child);
+                _list[index].Add(new ParentChild(parent, child, 0));
             }
 
             return true;
+        }
+
+        private int GetParentCHildren(VisualLink parent)
+        {
+            int count = 0;
+
+            foreach (List<ParentChild> list in _list)
+            {
+                foreach (ParentChild parentChild in list)
+                {
+                    if (Equals(parentChild.Parent, parent))
+                    {
+                        count++;
+                    }
+                }
+            }
+            return count;
         }
 
         public void AddRoot(ParentChild root)
@@ -95,7 +62,29 @@ namespace Visual_Crawl
             _list.Add(new List<ParentChild> {root});
         }
 
-        private int GetParentIndex(VisualLink parent)
+        public void ResetByParentIndex(VisualLink parent)
+        {
+            int index = GetParentListIndex(parent);
+
+            bool found = false;
+            int childIndex = -1;
+
+            foreach (ParentChild child in _list[index])
+            {
+                if (found && child.ChildIndex > childIndex)
+                {
+                    child.VisualLink.Left = (_list[index][child.ChildIndex - 1].VisualLink.Left + MainWindow.DefaultLeftMargin) -50;
+                }
+
+                if (Equals(child.VisualLink, parent))
+                {
+                    childIndex = child.ChildIndex;
+                    found = true;
+                }
+            }
+        }
+
+        private int GetParentListIndex(VisualLink parent)
         {
             foreach (List<ParentChild> list in _list)
             {

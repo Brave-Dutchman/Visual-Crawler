@@ -15,6 +15,7 @@ namespace Core
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/archief/"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/videos/"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/community/"));
+            links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/", "http://insidegamer.nl/communityssss/"));
 
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/game/", "http://insidegamer.nl/game/the-elder-scrolls-v-skyrim/"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/game/", "http://insidegamer.nl/game/tomb-raider-2013/"));
@@ -25,6 +26,9 @@ namespace Core
 
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/archief/random1/", "http://insidegamer.nl/archief/random1/ddddd"));
             links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/archief/random1/", "http://insidegamer.nl/archief/random2/ccccc"));
+
+            links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/communityssss/", "http://insidegamer.nl/dsadad/"));
+            links.Add(new Link("insidegamer.nl", "http://insidegamer.nl/communityssss/", "http://insidegamer.nl/commuasdasdnityssss/"));
 
             return links;
         }

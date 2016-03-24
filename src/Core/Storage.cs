@@ -14,9 +14,9 @@ namespace Core
     public static class Storage
     {
         //Fields
-        private  const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
-        private  const string LINKNAME = "Link"; //Value for Link tablename
-        private  const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
+        private const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
+        private const string LINKNAME = "Link"; //Value for Link tablename
+        private const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
         private static SQLiteConnection _dbConnection; //Connection to database
         private static string _dbConn; //Connection string
         private static string _filePath; //The Database filename with complete path
@@ -86,7 +86,10 @@ namespace Core
                 {
                     if (type == 0) //Link datatype
                     {
-                        sql = string.Format("CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)", tablename);
+                        sql =
+                            string.Format(
+                                "CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)",
+                                tablename);
                     }
                     else if (type == 1) //CrawledLink
                     {
@@ -115,7 +118,7 @@ namespace Core
         {
             foreach (Link link in links)
             {
-                if (!GetLinks().Contains(link))
+                if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteLinkQuery(link));
                 }
@@ -158,11 +161,43 @@ namespace Core
         {
             foreach (CrawledLink link in links)
             {
-                if (!GetCrawledLinks().Contains(link))
+                if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteCrawledLinkQuery(link));
                 }
             }
+        }
+
+        /// <summary>
+        /// Check for double Link and CrawledLink entries
+        /// </summary>
+        /// <param name="item">Link/CrawledLink</param>
+        /// <returns>Boolean True/False</returns>
+        private static bool CheckDoubles(object item)
+        {
+            if (item.GetType() == typeof (Link))
+            {
+                Link tempLink = (Link) item;
+                foreach (Link link in GetLinks())
+                {
+                    if (link.From == tempLink.From && link.Host == tempLink.Host && link.To == tempLink.To)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (item.GetType() == typeof (CrawledLink))
+            {
+                CrawledLink tempLink = (CrawledLink) item;
+                foreach (CrawledLink link in GetCrawledLinks())
+                {
+                    if (link.Link == tempLink.Link)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -172,7 +207,8 @@ namespace Core
         /// <returns>SQL query string</returns>
         private static string CreateWriteLinkQuery(Link link)
         {
-            return string.Format("insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})",
+            return
+                string.Format("insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})",
                     LINKNAME, link.Host, link.From, link.To, link.TimesOnPage);
         }
 
@@ -218,7 +254,8 @@ namespace Core
             List<Link> list = new List<Link>();
             while (reader.Read())
             {
-                Link link = new Link(reader["Host"].ToString(), reader["Origin"].ToString(), reader["Destiny"].ToString());
+                Link link = new Link(reader["Host"].ToString(), reader["Origin"].ToString(),
+                    reader["Destiny"].ToString());
                 list.Add(link);
             }
             return list;

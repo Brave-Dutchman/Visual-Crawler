@@ -20,7 +20,11 @@ namespace TestApplication
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Storage.Connect("test.sqlite");
+            
+            Link link = new Link("http://yolo.com","me","you");
+            List<Link> links = new List<Link>();
+            links.Add(link);
+            Storage.WriteLinks(links);
         }
     }
 }

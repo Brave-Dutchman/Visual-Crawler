@@ -118,7 +118,10 @@ namespace Core
         {
             foreach (Link link in links)
             {
-                ExecuteQuery(CreateWriteLinkQuery(link));
+                if (!GetLinks().Contains(link))
+                {
+                    ExecuteQuery(CreateWriteLinkQuery(link));
+                }
             }
         }
 

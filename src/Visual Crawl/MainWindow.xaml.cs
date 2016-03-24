@@ -22,6 +22,8 @@ namespace Visual_Crawl
         private const double DefaultLeftMargin = 250;
 
         private LinkedNode RootNode { get; set; }
+        private readonly List<LinkedNode> _linkedNodes = new List<LinkedNode>();
+
         public List<VisualLink> Links { get; set; }
 
         public MainWindow()
@@ -47,7 +49,7 @@ namespace Visual_Crawl
             List<ParentChild> nodes = new List<ParentChild>();
 
             //The root object
-            //TODO AddLinks(Links[0], TopStart);
+            AddLinks(Links[0], TopStart);
             nodes.Add(new ParentChild(null, Links[0]));
 
             foreach (VisualLink visualLink in Links)
@@ -59,23 +61,20 @@ namespace Visual_Crawl
                 double left = LeftStart;
 
                 //place all connected on the field
-                foreach (VisualLink foundLinks in arr)
+                foreach (VisualLink foundLink in arr)
                 {
-                    nodes.Add(new ParentChild(visualLink, foundLinks));
-
-                    //TODO AddLinks(foundLinks, top, left);
+                    nodes.Add(new ParentChild(visualLink, foundLink));
+                    AddLinks(foundLink, top, left);
                     left += DefaultLeftMargin;
                 }
             }
-
-            List<LinkedNode> linkedNodes = new List<LinkedNode>();
-
+            
             foreach (ParentChild parentChild in nodes)
             {
-                linkedNodes.Add(new LinkedNode(parentChild.VisualLink));
+                _linkedNodes.Add(new LinkedNode(parentChild.VisualLink));
             }
 
-            foreach (LinkedNode linkedNode in linkedNodes)
+            foreach (LinkedNode linkedNode in _linkedNodes)
             {
                 ParentChild parentChild = nodes.FirstOrDefault(x => x.VisualLink != null && Equals(x.VisualLink, linkedNode.Data));
 
@@ -83,7 +82,7 @@ namespace Visual_Crawl
                 {
                     VisualLink parent = parentChild.Parent;
 
-                    foreach (LinkedNode node in linkedNodes)
+                    foreach (LinkedNode node in _linkedNodes)
                     {
                         if (Equals(node.Data, parent))
                         {
@@ -94,7 +93,7 @@ namespace Visual_Crawl
                 }
             }
 
-            RootNode = linkedNodes[0];
+            RootNode = _linkedNodes[0];
         }
 
         private void AddLinks(VisualLink visual, double top, double left = 0)

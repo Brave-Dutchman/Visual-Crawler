@@ -32,11 +32,21 @@ namespace Visual_Crawl
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            List<Link> links = TestData.GetTestData();
-
-            foreach (Link link in links)
+            foreach (Link link in TestData.GetTestData())
             {
                 Links.Add(new VisualLink(link));
+            }
+
+            //Add the root node
+            _multi.Add(new ParentChild(null, Links[0]));
+
+            foreach (VisualLink visualLink in Links)
+            {
+                VisualLink[] arr = GetByFrom(visualLink.Link.To);
+                foreach (VisualLink foundLink in arr)
+                {
+                    _multi.Add(new ParentChild(visualLink, foundLink));
+                }
             }
 
             PlaceOnField();
@@ -44,38 +54,58 @@ namespace Visual_Crawl
 
         private void PlaceOnField()
         {
-            List<ParentChild> nodes = new List<ParentChild> { new ParentChild(null, Links[0]) };
+            List<List<ParentChildren>> parentChildren = _multi.GetParentChildrenList();
 
-            foreach (VisualLink visualLink in Links)
+            int widestChild = _multi.GetWightestChild();
+
+            double height = DefaultTopMargin;
+            double width = DefaultLeftMargin*widestChild * parentChildren.Count;
+
+            Field.Width = width;
+
+            double left = 0;
+            double top = 0;
+
+            foreach (VisualLink visualLink in parentChildren[0][0].VisualLinks)
             {
-                VisualLink[] arr = GetByFrom(visualLink.Link.To);
-                foreach (VisualLink foundLink in arr)
-                {
-                    nodes.Add(new ParentChild(visualLink, foundLink));
-                }
+                BuildRectangel(height, width, left, top);
             }
 
-            foreach (ParentChild parentChild in nodes)
+            top = height;
+            width = width / parentChildren[1][0].VisualLinks.Count;
+
+            foreach (VisualLink visualLink in parentChildren[1][0].VisualLinks)
             {
-                _multi.Add(parentChild);
+                BuildRectangel(height, width, left, top);
+                left += width;
             }
-            
-            double top = TopStart;
-            double left = LeftStart;
 
-            foreach (List<ParentChild> parentChildren in _multi.Get())
+
+            //foreach (List<ParentChildren> list in parentChildren)
+            //{
+            //    foreach (ParentChildren children in list)
+            //    {
+                    
+            //    }
+            //}
+        }
+
+        private void BuildRectangel(double height, double width, double left, double top)
+        {
+            Rectangle rect = new Rectangle
             {
-                foreach (ParentChild parentChild in parentChildren)
-                {
-                    AddLinks(parentChild.VisualLink, top, left);
-                    DrawLine(parentChild);
+                Width = width -2,
+                Height = height -2,
+                Fill = new SolidColorBrush(Colors.Red)
+            };
 
-                    left += DefaultLeftMargin;
-                }
+            rect.Stroke = new SolidColorBrush(Colors.Black);
+            rect.StrokeThickness = 1;
 
-                left = LeftStart;
-                top += DefaultTopMargin;
-            }
+            Canvas.SetLeft(rect, left);
+            Canvas.SetTop(rect, top);
+
+            Field.Children.Add(rect);
         }
 
         private void AddLinks(VisualLink visual, double top, double left)

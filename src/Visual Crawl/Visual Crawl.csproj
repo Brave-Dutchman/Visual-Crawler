@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="MultiDimentionalList.cs" />
     <Compile Include="ParentChild.cs" />
+    <Compile Include="ParentChildren.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="VisualLink.xaml.cs">
       <DependentUpon>VisualLink.xaml</DependentUpon>

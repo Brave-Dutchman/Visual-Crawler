@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Visual_Crawl
 {
@@ -15,6 +16,55 @@ namespace Visual_Crawl
         public List<List<ParentChild>> Get()
         {
             return _list;
+        }
+
+        public List<ParentChild> GetByIndex(int index)
+        {
+            return _list[index];
+        }
+
+        public List<List<ParentChildren>> GetParentChildrenList()
+        {
+            return _list.Select(GetNumbersList).ToList();
+        }
+
+        public int GetWightestChild()
+        {
+            int count = 0;
+
+            foreach (List<ParentChildren> list in GetParentChildrenList())
+            {
+                foreach (ParentChildren children in list)
+                {
+                    if (children.VisualLinks.Count > count)
+                    {
+                        count = children.VisualLinks.Count;
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        private List<ParentChildren> GetNumbersList(List<ParentChild> list)
+        {
+            List<ParentChildren> fors = new List<ParentChildren>();
+
+            foreach (ParentChild s in list)
+            {
+                ParentChildren obj = fors.FirstOrDefault(x => Equals(x.Parent, s.Parent));
+
+                if (obj == null)
+                {
+                    fors.Add(new ParentChildren(s.Parent, s.VisualLink));
+                }
+                else
+                {
+                    obj.VisualLinks.Add(s.VisualLink);
+                }
+            }
+
+            return fors; 
         }
 
         public bool Add(ParentChild child)

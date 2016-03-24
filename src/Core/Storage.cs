@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
@@ -13,11 +14,12 @@ namespace Core
     public static class Storage
     {
         //Fields
-        private const string DB_FILE = "Storage.sqlite"; //Filename for database
+        private const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
         private const string LINKNAME = "Link"; //Value for Link tablename
         private const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
         private static SQLiteConnection _dbConnection; //Connection to database
         private static string _dbConn; //Connection string
+        private static string _filePath; //The Database filename with complete path
 
         /// <summary>
         ///     Constructor
@@ -35,8 +37,9 @@ namespace Core
         /// </summary>
         private static void Enable()
         {
-            _dbConn = string.Format("Data Source={0};Version=3", DB_FILE);
-            if (!File.Exists(DB_FILE))
+            _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
+            _dbConn = string.Format("Data Source={0};Version=3", _filePath);
+            if (!File.Exists(_filePath))
             {
                 CreateDatabaseFile();
             }
@@ -62,7 +65,7 @@ namespace Core
         /// </summary>
         private static void CreateDatabaseFile()
         {
-            SQLiteConnection.CreateFile(DB_FILE);
+            SQLiteConnection.CreateFile(_filePath);
             Debug.WriteLine(string.Format("File {0} Created.", DB_FILE));
         }
 

@@ -24,7 +24,28 @@ namespace TestApplication
             Link link = new Link("http://yolo.com","me","you");
             List<Link> links = new List<Link>();
             links.Add(link);
+            CrawledLink link2 = new CrawledLink("Meow Meow");
+            List<CrawledLink> links2 = new List<CrawledLink>();
+            links2.Add(link2);
             Storage.WriteLinks(links);
+            Storage.WriteLinks(links2);
+
+            var list  = Storage.GetLinks();
+
+            foreach (var item in list)
+            {
+                listBox1.Items.Add(item.Host);
+   
+            }
+            var clist = Storage.GetCrawledLinks();
+            foreach (var item in clist)
+            {
+                listBox1.Items.Add(item.Link);
+
+            }
+
+
+
         }
     }
 }

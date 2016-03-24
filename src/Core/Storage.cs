@@ -115,8 +115,36 @@ namespace Core
         {
             foreach (Link link in links)
             {
-                ExecuteQuery(CreateLinkQuery(link));
+                ExecuteQuery(CreateWriteLinkQuery(link));
             }
+        }
+
+        /// <summary>
+        ///     Fetch the Links from the database and return them in a list.
+        /// </summary>
+        /// <returns>List of Links</returns>
+        public static List<Link> GetLinks()
+        {
+            return ReadLinks(ExecuteReader(CreateReadQuery(LINKNAME)));
+        }
+
+        /// <summary>
+        ///     Fetch the CrawledLinks from the database and return them in a list.
+        /// </summary>
+        /// <returns>List of CrawledLinks</returns>
+        public static List<CrawledLink> GetCrawledLinks()
+        {
+            return ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME)));
+        }
+
+        /// <summary>
+        ///     Create a query for reading from the database
+        /// </summary>
+        /// <param name="table">Tablename</param>
+        /// <returns>SQL query</returns>
+        private static string CreateReadQuery(string table)
+        {
+            return string.Format("select * from {0}", table);
         }
 
         /// <summary>
@@ -127,7 +155,7 @@ namespace Core
         {
             foreach (CrawledLink link in links)
             {
-                ExecuteQuery(CreateCrawledLinkQuery(link));
+                ExecuteQuery(CreateWriteCrawledLinkQuery(link));
             }
         }
 
@@ -136,7 +164,7 @@ namespace Core
         /// </summary>
         /// <param name="link">Link object</param>
         /// <returns>SQL query string</returns>
-        private static string CreateLinkQuery(Link link)
+        private static string CreateWriteLinkQuery(Link link)
         {
             return string.Format(
                 "insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})", LINKNAME,
@@ -149,10 +177,10 @@ namespace Core
         /// </summary>
         /// <param name="link">CrawledLink object</param>
         /// <returns>SQL query string</returns>
-        private static string CreateCrawledLinkQuery(CrawledLink link)
+        private static string CreateWriteCrawledLinkQuery(CrawledLink link)
         {
             return string.Format(
-                "insert into {0} (Link) values ({1})", CRAWLEDLINKNAME, link.Link);
+                "insert into {0} (Link) values ('{1}')", CRAWLEDLINKNAME, link.Link);
         }
 
         /// <summary>
@@ -163,6 +191,51 @@ namespace Core
         {
             SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
             command.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        ///     Create a new SQLite reader.
+        /// </summary>
+        /// <param name="sql">SQL query string</param>
+        /// <returns>SQLite Reader</returns>
+        private static SQLiteDataReader ExecuteReader(string sql)
+        {
+            SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            return reader;
+        }
+
+        /// <summary>
+        ///     Read Links from database and return them in a list.
+        /// </summary>
+        /// <param name="reader">SQLite Reader</param>
+        /// <returns>List of Links</returns>
+        private static List<Link> ReadLinks(SQLiteDataReader reader)
+        {
+            List<Link> list = new List<Link>();
+            while (reader.Read())
+            {
+                Link link = new Link(reader["Host"].ToString(), reader["Origin"].ToString(),
+                    reader["Destiny"].ToString());
+                list.Add(link);
+            }
+            return list;
+        }
+
+        /// <summary>
+        ///     Read CrawledLinks from database and return them in a list.
+        /// </summary>
+        /// <param name="reader">SQL Reader</param>
+        /// <returns>List of CrawledLinks</returns>
+        private static List<CrawledLink> ReadCrawledLinks(SQLiteDataReader reader)
+        {
+            List<CrawledLink> list = new List<CrawledLink>();
+            while (reader.Read())
+            {
+                CrawledLink link = new CrawledLink(reader["Link"].ToString());
+                list.Add(link);
+            }
+            return list;
         }
     }
 }

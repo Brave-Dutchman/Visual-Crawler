@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,18 +17,18 @@ namespace Visual_Crawl
         private const double TopStart = 70;
         private const double DefaultTopMargin = 150;
 
-        private const double LeftStart = 0;
+        private const double LeftStart = 70;
         private const double DefaultLeftMargin = 250;
 
-        private LinkedNode RootNode { get; set; }
-        private readonly List<LinkedNode> _linkedNodes = new List<LinkedNode>();
-
         public List<VisualLink> Links { get; set; }
+
+        private readonly MultiDimentionalList _multi;
 
         public MainWindow()
         {
             InitializeComponent();
             Links = new List<VisualLink>();
+            _multi = new MultiDimentionalList();
         }
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
@@ -46,96 +45,74 @@ namespace Visual_Crawl
 
         private void PlaceOnField()
         {
-            List<ParentChild> nodes = new List<ParentChild>();
-
-            //The root object
-            AddLinks(Links[0], TopStart);
-            nodes.Add(new ParentChild(null, Links[0]));
+            List<ParentChild> nodes = new List<ParentChild> { new ParentChild(null, Links[0]) };
 
             foreach (VisualLink visualLink in Links)
             {
-                //find al nodes connected to the root
                 VisualLink[] arr = GetByFrom(visualLink.Link.To);
-
-                double top = visualLink.Top + DefaultTopMargin;
-                double left = LeftStart;
-
-                //place all connected on the field
                 foreach (VisualLink foundLink in arr)
                 {
                     nodes.Add(new ParentChild(visualLink, foundLink));
-                    AddLinks(foundLink, top, left);
-                    left += DefaultLeftMargin;
                 }
             }
-            
+
             foreach (ParentChild parentChild in nodes)
             {
-                _linkedNodes.Add(new LinkedNode(parentChild.VisualLink));
+                _multi.Add(parentChild);
             }
+            
+            double top = TopStart;
+            double left = LeftStart;
 
-            foreach (LinkedNode linkedNode in _linkedNodes)
+            foreach (List<ParentChild> parentChildren in _multi.Get())
             {
-                ParentChild parentChild = nodes.FirstOrDefault(x => x.VisualLink != null && Equals(x.VisualLink, linkedNode.Data));
-
-                if (parentChild != null)
+                foreach (ParentChild parentChild in parentChildren)
                 {
-                    VisualLink parent = parentChild.Parent;
+                    AddLinks(parentChild.VisualLink, top, left);
+                    DrawLine(parentChild);
 
-                    foreach (LinkedNode node in _linkedNodes)
-                    {
-                        if (Equals(node.Data, parent))
-                        {
-                            node.LinkedNodes.Add(linkedNode);
-                            break;
-                        }
-                    }
+                    left += DefaultLeftMargin;
                 }
-            }
 
-            RootNode = _linkedNodes[0];
+                left = LeftStart;
+                top += DefaultTopMargin;
+            }
         }
 
-        private void AddLinks(VisualLink visual, double top, double left = 0)
+        private void AddLinks(VisualLink visual, double top, double left)
         {
-            visual.Left = Field.Width / 2 + left;
+            visual.Left = left;
             visual.Top = top;
 
             visual.MouseEnter += VisualOnMouseEnter;
             visual.MouseLeave += VisualOnMouseLeave;
 
-            Line line = new Line();
-            line.Stroke = new SolidColorBrush(Colors.Gray);
-            line.StrokeThickness = 1;
-            Panel.SetZIndex(line,  -100);
+            Field.Children.Add(visual);
+        }
 
-            VisualLink from = GetLinkByLink(visual.Link.From);
+        private void DrawLine(ParentChild child)
+        {
+            if (child.Parent == null) return;
 
-            line.X1 = from.CenterLeft;
-            line.Y1 = from.CenterTop;
-            line.X2 = visual.CenterLeft;
-            line.Y2 = visual.CenterTop;
+            Line line = new Line
+            {
+                Stroke = new SolidColorBrush(Colors.Gray),
+                StrokeThickness = 1
+            };
+
+            Panel.SetZIndex(line, -100);
+
+            line.X1 = child.Parent.CenterLeft;
+            line.Y1 = child.Parent.CenterTop;
+            line.X2 = child.VisualLink.CenterLeft;
+            line.Y2 = child.VisualLink.CenterTop;
 
             Field.Children.Add(line);
-            Field.Children.Add(visual);
         }
 
         private VisualLink[] GetByFrom(string link)
         {
             return Links.FindAll(x => x.Link.From == link && x.Link.To != link).ToArray();
-        }
-
-        private VisualLink GetLinkByLink(string link)
-        {
-            foreach (VisualLink visualLink in Links)
-            {
-                if (visualLink.Link.To == link)
-                {
-                    return visualLink;
-                }
-            }
-
-            throw new Exception();
         }
 
         private void VisualOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)

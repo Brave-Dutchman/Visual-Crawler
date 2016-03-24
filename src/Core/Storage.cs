@@ -158,7 +158,10 @@ namespace Core
         {
             foreach (CrawledLink link in links)
             {
-                ExecuteQuery(CreateWriteCrawledLinkQuery(link));
+                if (!GetCrawledLinks().Contains(link))
+                {
+                    ExecuteQuery(CreateWriteCrawledLinkQuery(link));
+                }
             }
         }
 

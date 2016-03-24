@@ -3,11 +3,11 @@ using Core;
 
 namespace Backgroud_Crawler
 {
-    public static class CrawledList
+    public static class ToCrawl
     {
         private static Stack<CrawledLink> _linksToCrawl;
 
-        static CrawledList()
+        static ToCrawl()
         {
             _linksToCrawl = Storage.GetCrawledLinks();
         }

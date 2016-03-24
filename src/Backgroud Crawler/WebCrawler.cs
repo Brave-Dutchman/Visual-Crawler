@@ -30,7 +30,7 @@ namespace Backgroud_Crawler
         {
             while (!Stop)
             {
-                string url = CrawledList.GetCrawledLink().Link;
+                string url = ToCrawl.GetCrawledLink().Link;
                 Crawler(url);
             }
         }

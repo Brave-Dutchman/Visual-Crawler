@@ -26,5 +26,18 @@ namespace Backgroud_Crawler
                 return link;
             }
         }
+
+        public static bool ContainsCrawled(this List<CrawledLink> crawled, CrawledLink toFind)
+        {
+            foreach (CrawledLink link in crawled)
+            {
+                if (link.Link == toFind.Link)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

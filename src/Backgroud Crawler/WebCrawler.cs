@@ -9,7 +9,7 @@ namespace Backgroud_Crawler
 {
     public class WebCrawler
     {
-        private const string START_URL = "http://github.com/";
+        private const string START_URL = "https://github.com";
         
         private readonly int _number;
 
@@ -23,6 +23,7 @@ namespace Backgroud_Crawler
 
         public void FirstCrawl()
         {
+            Storage.WriteLinks(new List<CrawledLink>() { new CrawledLink(START_URL) });
             Crawler(START_URL);
         }
 
@@ -62,12 +63,16 @@ namespace Backgroud_Crawler
                                 string url = match.ToString();
                                 if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
 
-                                if (!url.StartsWith("http"))
+                                if (!url.StartsWith("http") && !url.StartsWith("//"))
                                 {
                                     url = header + url;
                                 }
 
-                                crawled.Add(new CrawledLink(url));
+                                CrawledLink found = new CrawledLink(url);
+
+                                if (crawled.ContainsCrawled(found)) continue;
+   
+                                crawled.Add(found);
                                 links.Add(new Link(myWebResponse.ResponseUri.Host, webUrl, url));
                             }
                         }

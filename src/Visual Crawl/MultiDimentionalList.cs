@@ -66,6 +66,8 @@ namespace Visual_Crawl
         {
             int index = GetParentListIndex(parent);
 
+            if (index == -1) return;
+
             bool found = false;
             int childIndex = -1;
 
@@ -97,7 +99,8 @@ namespace Visual_Crawl
                 }
             }
 
-            throw new Exception("Parent does not exist, yet :)");
+            //throw new Exception("Parent does not exist, yet :)");
+            return -1;
         }
     }
 }

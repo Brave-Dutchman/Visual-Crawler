@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +15,8 @@ namespace Backgroud_Crawler
 
         public CrawlerController()
         {
-            WebCrawlers = new List<WebCrawler> { new WebCrawler(1), new WebCrawler(2), new WebCrawler(3), new WebCrawler(4) };
- 
+            WebCrawlers = new List<WebCrawler> { new WebCrawler(1), /*new WebCrawler(2), new WebCrawler(3), new WebCrawler(4) */};
+
             _cpuCounter = new PerformanceCounter
             {
                 CategoryName = "Processor",
@@ -42,31 +41,31 @@ namespace Backgroud_Crawler
             {
                 float cpu = GetCurrentCpuUsage();
 
-                if (cpu > 80)
-                {
-                    if (WebCrawlers.Count > 0)
-                    {
-                        WebCrawlers[WebCrawlers.Count -1].Stop = true;
-                        WebCrawlers.RemoveAt(WebCrawlers.Count - 1);
-                        Console.WriteLine("Removed a crawler, {0}", WebCrawlers.Count);
-                    }
-                }
-                else if(cpu < 50)
-                {
-                    if (WebCrawlers.Count < 20)
-                    {
-                        WebCrawler crawler = new WebCrawler(WebCrawlers.Count + 1);
-                        WebCrawlers.Add(crawler);
-                        StartTask(crawler);
-                        Console.WriteLine("Created new Crawler, {0}", WebCrawlers.Count);
-                    }
-                }
+                //if (cpu > 80)
+                //{
+                //    if (WebCrawlers.Count > 0)
+                //    {
+                //        WebCrawlers[WebCrawlers.Count - 1].Stop = true;
+                //        WebCrawlers.RemoveAt(WebCrawlers.Count - 1);
+                //        Console.WriteLine("Removed a crawler, {0}", WebCrawlers.Count);
+                //    }
+                //}
+                //else if (cpu < 50)
+                //{
+                //    if (WebCrawlers.Count < 2)
+                //    {
+                //        WebCrawler crawler = new WebCrawler(WebCrawlers.Count + 1);
+                //        WebCrawlers.Add(crawler);
+                //        StartTask(crawler);
+                //        Console.WriteLine("Created new Crawler, {0}", WebCrawlers.Count);
+                //    }
+                //}
 
                 Thread.Sleep(1000);
             }
         }
 
-        private void StartTask(WebCrawler crawler)
+        private static void StartTask(WebCrawler crawler)
         {
             Task.Run(() => { crawler.Run(); });
         }

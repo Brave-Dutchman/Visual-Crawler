@@ -3,63 +3,54 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using Core;
 
 namespace Backgroud_Crawler
 {
     public class WebCrawler
     {
-        private const string StartUrl = "http://github.nl/";
+        private const string START_URL = "http://github.com/";
         
         private readonly int _number;
-
-        private readonly List<string> _links;
-        private readonly List<ALink> _foundText;
-
 
         public bool Stop { get; set; }
 
         public WebCrawler(int number)
         {
             _number = number;
-
-            _links = new List<string>();
-            _foundText = new List<ALink>();
-
             Stop = false;
+        }
+
+        public void FirstCrawl()
+        {
+            Crawler(START_URL);
         }
 
         public void Run()
         {
-            int level = 0;
-            Crawler(StartUrl, level);
-
             while (!Stop)
             {
-                level++;
-
-                ALink[] linsk = GetByLevels(level);
-
-                foreach (ALink link in linsk)
-                {
-                    Crawler(link.Link, level);
-                }
+                string url = CrawledList.GetCrawledLink().Link;
+                Crawler(url);
             }
         }
 
-        private void Crawler(string webUrl, int level)
+        private void Crawler(string webUrl)
         {
             try
             {
+                List<CrawledLink> crawled = new List<CrawledLink>();
+                List<Link> links = new List<Link>();
+
                 WebRequest myWebRequest = WebRequest.Create(webUrl);
 
                 using (WebResponse myWebResponse = myWebRequest.GetResponse())
                 {
-
                     using (Stream streamResponse = myWebResponse.GetResponseStream())
                     {
                         string header = myWebResponse.ResponseUri.Scheme + "://" + myWebResponse.ResponseUri.Host;
 
-                        Console.WriteLine("{0}:{1}:{2}\n", _number, level, myWebResponse.ResponseUri);
+                        Console.WriteLine("{0}:{1}\n", _number, myWebResponse.ResponseUri);
 
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
@@ -76,41 +67,20 @@ namespace Backgroud_Crawler
                                     url = header + url;
                                 }
 
-                                if (_links.Contains(url)) continue;
-
-                                _foundText.Add(new ALink(level + 1, url));
-                                _links.Add(url);
+                                crawled.Add(new CrawledLink(url));
+                                links.Add(new Link(myWebResponse.ResponseUri.Host, webUrl, url));
                             }
                         }
                     }
                 }
+
+                Storage.WriteLinks(crawled);
+                Storage.WriteLinks(links);
             }
             catch (Exception e)
             {
                 Console.WriteLine("\t{0}:{1}", webUrl, e.Message);
             }
-        }
-
-        private ALink[] GetByLevels(int level)
-        {
-            return _foundText.FindAll(x => x.Level == level).ToArray();
-        }
-    }
-
-    public class ALink
-    {
-        public ALink(int level, string link)
-        {
-            Level = level;
-            Link = link;
-        }
-
-        public int Level { get; set; }
-        public string Link { get; set; }
-
-        public override string ToString()
-        {
-            return Link;
         }
     }
 }

@@ -14,9 +14,9 @@ namespace Core
     public static class Storage
     {
         //Fields
-        private const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
-        private const string LINKNAME = "Link"; //Value for Link tablename
-        private const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
+        private  const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
+        private  const string LINKNAME = "Link"; //Value for Link tablename
+        private  const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
         private static SQLiteConnection _dbConnection; //Connection to database
         private static string _dbConn; //Connection string
         private static string _filePath; //The Database filename with complete path
@@ -86,10 +86,7 @@ namespace Core
                 {
                     if (type == 0) //Link datatype
                     {
-                        sql =
-                            string.Format(
-                                "CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)",
-                                tablename);
+                        sql = string.Format("CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)", tablename);
                     }
                     else if (type == 1) //CrawledLink
                     {
@@ -135,7 +132,7 @@ namespace Core
         ///     Fetch the CrawledLinks from the database and return them in a list.
         /// </summary>
         /// <returns>List of CrawledLinks</returns>
-        public static List<CrawledLink> GetCrawledLinks()
+        public static Stack<CrawledLink> GetCrawledLinks()
         {
             return ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME)));
         }
@@ -169,10 +166,8 @@ namespace Core
         /// <returns>SQL query string</returns>
         private static string CreateWriteLinkQuery(Link link)
         {
-            return string.Format(
-                "insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})", LINKNAME,
-                link.Host,
-                link.From, link.To, link.TimesOnPage);
+            return string.Format("insert into {0} (Host, Origin, Destiny, TimesOnPage) values ('{1}', '{2}', '{3}', {4})",
+                    LINKNAME, link.Host, link.From, link.To, link.TimesOnPage);
         }
 
         /// <summary>
@@ -182,8 +177,7 @@ namespace Core
         /// <returns>SQL query string</returns>
         private static string CreateWriteCrawledLinkQuery(CrawledLink link)
         {
-            return string.Format(
-                "insert into {0} (Link) values ('{1}')", CRAWLEDLINKNAME, link.Link);
+            return string.Format("insert into {0} (Link) values ('{1}')", CRAWLEDLINKNAME, link.Link);
         }
 
         /// <summary>
@@ -218,8 +212,7 @@ namespace Core
             List<Link> list = new List<Link>();
             while (reader.Read())
             {
-                Link link = new Link(reader["Host"].ToString(), reader["Origin"].ToString(),
-                    reader["Destiny"].ToString());
+                Link link = new Link(reader["Host"].ToString(), reader["Origin"].ToString(), reader["Destiny"].ToString());
                 list.Add(link);
             }
             return list;
@@ -230,15 +223,16 @@ namespace Core
         /// </summary>
         /// <param name="reader">SQL Reader</param>
         /// <returns>List of CrawledLinks</returns>
-        private static List<CrawledLink> ReadCrawledLinks(SQLiteDataReader reader)
+        private static Stack<CrawledLink> ReadCrawledLinks(SQLiteDataReader reader)
         {
-            List<CrawledLink> list = new List<CrawledLink>();
+            Stack<CrawledLink> stack = new Stack<CrawledLink>();
+
             while (reader.Read())
             {
                 CrawledLink link = new CrawledLink(reader["Link"].ToString());
-                list.Add(link);
+                stack.Push(link);
             }
-            return list;
+            return stack;
         }
     }
 }

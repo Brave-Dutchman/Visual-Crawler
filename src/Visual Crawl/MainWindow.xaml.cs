@@ -32,7 +32,7 @@ namespace Visual_Crawl
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            foreach (Link link in TestData.GetTestData())
+            foreach (Link link in Storage.GetLinks())
             {
                 Links.Add(new VisualLink(link));
             }

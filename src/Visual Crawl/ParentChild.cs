@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Core;
-
-namespace Visual_Crawl
+﻿namespace Visual_Crawl
 {
     public class ParentChild
     {

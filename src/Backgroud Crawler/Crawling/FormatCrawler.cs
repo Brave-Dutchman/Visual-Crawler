@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Core;
 using Core.Objects;
 
@@ -11,6 +10,9 @@ namespace Backgroud_Crawler.Crawling
 {
     public class FormatCrawler : Threaded
     {
+        List<CrawledLink> crawled = new List<CrawledLink>();
+        List<Link> links = new List<Link>();
+
         public override void Run()
         {
             while (!Stop)
@@ -31,8 +33,6 @@ namespace Backgroud_Crawler.Crawling
         public void Format(CrawledContent crawledContent)
         {
             Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
-            List<CrawledLink> crawled = new List<CrawledLink>();
-            List<Link> links = new List<Link>();
 
             MatchCollection matches = regexLink.Matches(crawledContent.Content);
 
@@ -68,13 +68,12 @@ namespace Backgroud_Crawler.Crawling
                 }
             }
 
+            ToDbStorage.Add(crawled);
+            crawled.Clear();
 
-            Task.Run(() => 
-            {
-                Storage.WriteLinks(crawled);
-                Storage.WriteLinks(links);
-            });
-            
+            ToDbStorage.Add(links);
+            links.Clear();
+
             Console.WriteLine("Formated: {0}\n", crawledContent.Url);
         }
     }

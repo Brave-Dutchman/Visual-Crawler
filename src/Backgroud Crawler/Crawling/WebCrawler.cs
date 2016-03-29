@@ -39,7 +39,7 @@ namespace Backgroud_Crawler.Crawling
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
                             CrawlingStorage.AddFound(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse)); 
-                            Console.WriteLine("Crawled: {0}\n", myWebResponse.ResponseUri); //Reads it to the end
+                            //Console.WriteLine("Crawled: {0}\n", myWebResponse.ResponseUri); //Reads it to the end
                         }
                     }
                 }

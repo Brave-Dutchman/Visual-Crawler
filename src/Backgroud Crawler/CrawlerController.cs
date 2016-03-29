@@ -15,7 +15,7 @@ namespace Backgroud_Crawler
         private readonly PerformanceCounter _cpuCounter;
         private readonly WebCrawler _crawler;
 
-        private List<FormatCrawler> _formatCrawlers;
+        private readonly List<FormatCrawler> _formatCrawlers;
         private bool _stop;
 
         public CrawlerController()

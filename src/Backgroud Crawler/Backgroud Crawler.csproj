@@ -69,6 +69,7 @@
     <Compile Include="Crawling\Threaded.cs" />
     <Compile Include="Crawling\CrawlingStorage.cs" />
     <Compile Include="CrawlerController.cs" />
+    <Compile Include="Crawling\ToDbStorage.cs" />
     <Compile Include="Crawling\WebCrawler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

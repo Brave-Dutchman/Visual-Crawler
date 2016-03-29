@@ -229,10 +229,10 @@ namespace Core
         ///     Executes a query using a SQL query string.
         /// </summary>
         /// <param name="sql">SQL query string</param>
-        private static void ExecuteQuery(string sql)
+        private static async void ExecuteQuery(string sql)
         {
             SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-            command.ExecuteNonQueryAsync();
+            await command.ExecuteNonQueryAsync();
         }
 
         /// <summary>

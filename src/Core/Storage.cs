@@ -92,7 +92,7 @@ namespace Core
                 }
                 else if (type == 1) //CrawledLink
                 {
-                    sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255));", tablename);
+                    sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255), IsCrawled INT);", tablename);
                 }
                 else
                 {
@@ -121,6 +121,16 @@ namespace Core
         public static Stack<CrawledLink> GetCrawledLinks()
         {
             return ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME)));
+        }
+
+        private static int ConvertBoolToInt(bool input)
+        {
+            return input ? 1 : 0;
+        }
+
+        private static bool ConvertIntToBool(int input)
+        {
+            return input == 1;
         }
 
         /// <summary>
@@ -212,7 +222,7 @@ namespace Core
         /// <returns>SQL query string</returns>
         private static string CreateWriteCrawledLinkQuery(CrawledLink link)
         {
-            return string.Format("insert into {0} (Link) values ('{1}')", CRAWLEDLINKNAME, link.Link);
+            return string.Format("insert into {0} (Link, IsCrawled) values ('{1}', {2})", CRAWLEDLINKNAME, link.Link, ConvertBoolToInt(link.IsCrawled));
         }
 
         /// <summary>
@@ -265,7 +275,7 @@ namespace Core
 
             while (reader.Read())
             {
-                CrawledLink link = new CrawledLink(reader["Link"].ToString());
+                CrawledLink link = new CrawledLink(reader["Link"].ToString(), ConvertIntToBool((int)reader["IsCrawled"]));
                 stack.Push(link);
             }
             return stack;

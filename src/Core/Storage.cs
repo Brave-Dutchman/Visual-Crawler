@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Core.Objects;
 
 namespace Core
 {
@@ -14,13 +15,13 @@ namespace Core
     /// </summary>
     public static class Storage
     {
-        //Fields
-        private const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
-        private const string LINKNAME = "Link"; //Value for Link tablename
-        private const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
-        private static SQLiteConnection _dbConnection; //Connection to database
-        private static string _dbConn; //Connection string
-        private static string _filePath; //The Database filename with complete path
+        // Fields
+        private static SQLiteConnection _dbConnection;              //Connection to database
+        private  const string DB_FILE = "VisualWebCrawler.sqlite";  //Filename for database
+        private  const string LINKNAME = "Link";                    //Value for Link tablename
+        private  const string CRAWLEDLINKNAME = "CrawledLink";      //Value for CrawledLink tablename
+        private static string _dbConn;                              //Connection string
+        private static string _filePath;                            //The Database filename with complete path
 
         /// <summary>
         ///     Constructor
@@ -40,10 +41,12 @@ namespace Core
         {
             _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
             _dbConn = string.Format("Data Source={0};Version=3", _filePath);
+
             if (!File.Exists(_filePath))
             {
                 CreateDatabaseFile();
             }
+
             _dbConnection = new SQLiteConnection(_dbConn);
             _dbConnection.Open();
             CheckCreateTable(LINKNAME, 0);
@@ -78,52 +81,28 @@ namespace Core
         /// <returns>Succes/Failure</returns>
         private static bool CheckCreateTable(string tablename, int type)
         {
-            //try
-            {
-                string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';",
-                    tablename);
-                SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-                if (!command.ExecuteReader().HasRows)
-                {
-                    if (type == 0) //Link datatype
-                    {
-                        sql =
-                            string.Format(
-                                "CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)",
-                                tablename);
-                    }
-                    else if (type == 1) //CrawledLink
-                    {
-                        sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255));", tablename);
-                    }
-                    else
-                    {
-                        return false;
-                    }
+            string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", tablename);
+            SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
 
-                    ExecuteQuery(sql);
-                }
-            }
-            //catch
+            if (!command.ExecuteReader().HasRows)
             {
-                //return false;
+                if (type == 0) //Link datatype
+                {
+                    sql = string.Format("CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)", tablename);
+                }
+                else if (type == 1) //CrawledLink
+                {
+                    sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255));", tablename);
+                }
+                else
+                {
+                    return false;
+                }
+
+                ExecuteQuery(sql);
             }
+            
             return true;
-        }
-
-        /// <summary>
-        ///     Write Links to database.
-        /// </summary>
-        /// <param name="links">List of Links</param>
-        public static void WriteLinks(List<Link> links)
-        {
-            foreach (Link link in links)
-            {
-                if (!CheckDoubles(link))
-                {
-                    ExecuteQuery(CreateWriteLinkQuery(link));
-                }
-            }
         }
 
         /// <summary>
@@ -155,6 +134,21 @@ namespace Core
         }
 
         /// <summary>
+        ///     Write Links to database.
+        /// </summary>
+        /// <param name="links">List of Links</param>
+        public static void WriteLinks(List<Link> links)
+        {
+            foreach (Link link in links)
+            {
+                //if (!CheckDoubles(link))
+                {
+                    ExecuteQuery(CreateWriteLinkQuery(link));
+                }
+            }
+        }
+
+        /// <summary>
         ///     Write CrawledLinks to database.
         /// </summary>
         /// <param name="links">List of CrawledLinks</param>
@@ -162,7 +156,7 @@ namespace Core
         {
             foreach (CrawledLink link in links)
             {
-                if (!CheckDoubles(link))
+                //if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteCrawledLinkQuery(link));
                 }

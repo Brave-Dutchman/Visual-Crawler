@@ -65,9 +65,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ToCrawl.cs" />
+    <Compile Include="Crawling\FormatCrawler.cs" />
+    <Compile Include="Crawling\Threaded.cs" />
+    <Compile Include="Crawling\CrawlingStorage.cs" />
     <Compile Include="CrawlerController.cs" />
-    <Compile Include="WebCrawler.cs" />
+    <Compile Include="Crawling\WebCrawler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

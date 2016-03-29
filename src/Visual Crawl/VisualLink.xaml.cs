@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using Core;
+using Core.Objects;
 using Visual_Crawl.Annotations;
 
 namespace Visual_Crawl

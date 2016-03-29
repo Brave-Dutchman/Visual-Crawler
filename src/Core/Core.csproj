@@ -67,8 +67,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrawledLink.cs" />
-    <Compile Include="Link.cs" />
+    <Compile Include="Objects\CrawledContent.cs" />
+    <Compile Include="Objects\CrawledLink.cs" />
+    <Compile Include="Objects\Link.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Extends.cs" />

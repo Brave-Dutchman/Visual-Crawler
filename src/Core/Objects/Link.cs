@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace Core.Objects
 {
     public class Link
     {

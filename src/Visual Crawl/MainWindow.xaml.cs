@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Core;
+using Core.Objects;
 
 namespace Visual_Crawl
 {

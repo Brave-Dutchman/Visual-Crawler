@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Backgroud_Crawler.Crawling;
 using Core;
+using Core.Objects;
 
 namespace Backgroud_Crawler
 {
     public class CrawlerController
     {
-        private static List<WebCrawler> WebCrawlers { get; set; }
+        private const int MAX_CRAWLERS = 5;
         private readonly PerformanceCounter _cpuCounter;
+        private readonly WebCrawler _crawler;
 
+        private List<FormatCrawler> _formatCrawlers;
         private bool _stop;
 
         public CrawlerController()
         {
-            WebCrawlers = new List<WebCrawler> { new WebCrawler(1) };
+            _crawler = new WebCrawler();
+            _formatCrawlers = new List<FormatCrawler> { new FormatCrawler() };
 
-            if (ToCrawl.Count == 0)
-            {
-                const string url = "https://github.com";
-
-                Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
-                WebCrawlers[0].FirstCrawl(url);
-            }
+            //TODO remove this or make a check
+            const string url = "https://en.wikipedia.org/wiki/Frank_Matson";
+            Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
 
             _cpuCounter = new PerformanceCounter
             {
@@ -41,9 +42,10 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
-            foreach (WebCrawler item in WebCrawlers)
+            StartTask(_crawler);
+            foreach (FormatCrawler crawler in _formatCrawlers)
             {
-                StartTask(item);
+                StartTask(crawler);
             }
 
             while (!_stop)
@@ -52,21 +54,23 @@ namespace Backgroud_Crawler
 
                 if (cpu > 80)
                 {
-                    if (WebCrawlers.Count > 0)
+                    if (_formatCrawlers.Count > 0)
                     {
-                        WebCrawlers[WebCrawlers.Count - 1].Stop = true;
-                        WebCrawlers.RemoveAt(WebCrawlers.Count - 1);
-                        Console.WriteLine("Removed a crawler, {0}", WebCrawlers.Count);
+                        int index = _formatCrawlers.Count - 1;
+
+                        _formatCrawlers[index].Stop = true;
+                        _formatCrawlers.RemoveAt(index);
+                        Console.WriteLine("Removed a FormatCrawler, {0}", _formatCrawlers.Count);
                     }
                 }
                 else if (cpu < 50)
                 {
-                    if (WebCrawlers.Count < 2)
+                    if (_formatCrawlers.Count < MAX_CRAWLERS)
                     {
-                        WebCrawler crawler = new WebCrawler(WebCrawlers.Count + 1);
-                        WebCrawlers.Add(crawler);
+                        FormatCrawler crawler = new FormatCrawler();
+                        _formatCrawlers.Add(crawler);
                         StartTask(crawler);
-                        Console.WriteLine("Created new Crawler, {0}", WebCrawlers.Count);
+                        Console.WriteLine("Created new FormatCrawler, {0}", _formatCrawlers.Count);
                     }
                 }
 
@@ -74,18 +78,19 @@ namespace Backgroud_Crawler
             }
         }
 
-        private static void StartTask(WebCrawler crawler)
+        private static void StartTask(Threaded threaded)
         {
-            Task.Run(() => { crawler.Run(); });
+            Task.Run(() => { threaded.Run(); });
         }
 
         public void Stop()
         {
             _stop = true;
+            _crawler.Stop = true;
 
-            foreach (WebCrawler webCrawler in WebCrawlers)
+            foreach (FormatCrawler crawler in _formatCrawlers)
             {
-                webCrawler.Stop = true;
+                crawler.Stop = true;
             }
         }
     }

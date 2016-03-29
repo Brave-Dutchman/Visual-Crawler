@@ -232,7 +232,7 @@ namespace Core
         private static void ExecuteQuery(string sql)
         {
             SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-            command.ExecuteNonQuery();
+            command.ExecuteNonQueryAsync();
         }
 
         /// <summary>

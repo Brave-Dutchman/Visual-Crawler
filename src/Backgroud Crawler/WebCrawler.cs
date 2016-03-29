@@ -9,8 +9,6 @@ namespace Backgroud_Crawler
 {
     public class WebCrawler
     {
-        private const string START_URL = "https://github.com";
-        
         private readonly int _number;
 
         public bool Stop { get; set; }
@@ -21,10 +19,10 @@ namespace Backgroud_Crawler
             Stop = false;
         }
 
-        public void FirstCrawl()
+        public void FirstCrawl(string url)
         {
-            Storage.WriteLinks(new List<CrawledLink>() { new CrawledLink(START_URL) });
-            Crawler(START_URL);
+            Storage.WriteLinks(new List<CrawledLink>() { new CrawledLink(url) });
+            Crawler(url);
         }
 
         public void Run()
@@ -63,13 +61,17 @@ namespace Backgroud_Crawler
                                 string url = match.ToString();
                                 if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
 
-                                if (!url.StartsWith("http") && !url.StartsWith("//"))
+                                if (!url.StartsWith("http"))
                                 {
                                     url = header + url;
                                 }
 
-                                CrawledLink found = new CrawledLink(url);
+                                if (url.StartsWith("//"))
+                                {
+                                    url = myWebResponse.ResponseUri.Scheme + url;
+                                }
 
+                                CrawledLink found = new CrawledLink(url);
                                 if (crawled.ContainsCrawled(found)) continue;
    
                                 crawled.Add(found);

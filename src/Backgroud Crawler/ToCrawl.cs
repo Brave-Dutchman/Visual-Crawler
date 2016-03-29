@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core;
 
 namespace Backgroud_Crawler
@@ -6,6 +8,12 @@ namespace Backgroud_Crawler
     public static class ToCrawl
     {
         private static Stack<CrawledLink> _linksToCrawl;
+
+        public static int Count
+        {
+            get { return _linksToCrawl.Count; }
+        }
+
 
         static ToCrawl()
         {
@@ -18,26 +26,23 @@ namespace Backgroud_Crawler
             {
                 if (_linksToCrawl.Count <= 0)
                 {
-                    new WebCrawler(0).FirstCrawl();
                     _linksToCrawl = Storage.GetCrawledLinks();
                 }
-
-                CrawledLink link = _linksToCrawl.Pop();
-                return link;
+                
+                try
+                {
+                    return _linksToCrawl.Pop();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
         public static bool ContainsCrawled(this List<CrawledLink> crawled, CrawledLink toFind)
         {
-            foreach (CrawledLink link in crawled)
-            {
-                if (link.Link == toFind.Link)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return crawled.Any(link => link.Link == toFind.Link);
         }
     }
 }

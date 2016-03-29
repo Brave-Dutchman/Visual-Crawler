@@ -71,6 +71,7 @@
     <Compile Include="Link.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage.cs" />
+    <Compile Include="Extends.cs" />
     <Compile Include="TestData.cs" />
   </ItemGroup>
   <ItemGroup>

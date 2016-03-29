@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Core;
 
 namespace Backgroud_Crawler
@@ -38,11 +37,6 @@ namespace Backgroud_Crawler
                     return null;
                 }
             }
-        }
-
-        public static bool ContainsCrawled(this List<CrawledLink> crawled, CrawledLink toFind)
-        {
-            return crawled.Any(link => link.Link == toFind.Link);
         }
     }
 }

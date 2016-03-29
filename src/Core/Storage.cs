@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Core
 {
@@ -175,29 +176,27 @@ namespace Core
         /// <returns>Boolean True/False</returns>
         private static bool CheckDoubles(object item)
         {
-            if (item.GetType() == typeof (Link))
+            if (item.GetType() == typeof(Link))
             {
-                Link tempLink = (Link) item;
-                foreach (Link link in GetLinks())
-                {
-                    if (link.From == tempLink.From && link.Host == tempLink.Host && link.To == tempLink.To)
-                    {
-                        return true;
-                    }
-                }
+                return CheckLinksDouble((Link)item);
             }
-            if (item.GetType() == typeof (CrawledLink))
+
+            if (item.GetType() == typeof(CrawledLink))
             {
-                CrawledLink tempLink = (CrawledLink) item;
-                foreach (CrawledLink link in GetCrawledLinks())
-                {
-                    if (link.Link == tempLink.Link)
-                    {
-                        return true;
-                    }
-                }
+                return CheckCrawledLinksDouble(((CrawledLink)item).Link);
             }
+
             return false;
+        }
+
+        public static bool CheckLinksDouble(Link item)
+        {
+            return GetLinks().Any(link => link.From == item.From && link.Host == item.Host && link.To == item.To);
+        }
+
+        public static bool CheckCrawledLinksDouble(string itemLink)
+        {
+            return GetCrawledLinks().Any(link => link.Link == itemLink);
         }
 
         /// <summary>

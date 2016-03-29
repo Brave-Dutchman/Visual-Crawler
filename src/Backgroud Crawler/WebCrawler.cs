@@ -61,21 +61,31 @@ namespace Backgroud_Crawler
                                 string url = match.ToString();
                                 if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
 
+                                if (url.StartsWith("//"))
+                                {
+                                    url = myWebResponse.ResponseUri.Scheme + ":" + url;
+                                }
+
                                 if (!url.StartsWith("http"))
                                 {
                                     url = header + url;
                                 }
 
-                                if (url.StartsWith("//"))
+                                if (header == url || url.Contains("?")) continue;
+
+                                if (!crawled.ContainsCrawled(url) && !Storage.CheckCrawledLinksDouble(url))
                                 {
-                                    url = myWebResponse.ResponseUri.Scheme + url;
+                                    crawled.Add(new CrawledLink(url));
                                 }
 
-                                CrawledLink found = new CrawledLink(url);
-                                if (crawled.ContainsCrawled(found)) continue;
-   
-                                crawled.Add(found);
-                                links.Add(new Link(myWebResponse.ResponseUri.Host, webUrl, url));
+                                if (links.ContainsLink(webUrl, url))
+                                {
+                                    links.FindLink(webUrl, url).TimesOnPage++;
+                                }
+                                else
+                                {
+                                    links.Add(new Link(myWebResponse.ResponseUri.Host, webUrl, url));
+                                }
                             }
                         }
                     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Core;
 
 namespace Backgroud_Crawler
 {
@@ -19,7 +20,10 @@ namespace Backgroud_Crawler
 
             if (ToCrawl.Count == 0)
             {
-                WebCrawlers[0].FirstCrawl("https://github.com/");
+                const string url = "https://github.com";
+
+                Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
+                WebCrawlers[0].FirstCrawl(url);
             }
 
             _cpuCounter = new PerformanceCounter

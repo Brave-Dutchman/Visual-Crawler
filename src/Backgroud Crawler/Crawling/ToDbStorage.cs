@@ -6,7 +6,6 @@ namespace Backgroud_Crawler.Crawling
 {
     public static class ToDbStorage
     {
-        private const int MAX = 1000;
         private static readonly List<Link> LINKS;
         private static readonly List<CrawledLink> CRAWLED_LINKS;
 
@@ -15,19 +14,28 @@ namespace Backgroud_Crawler.Crawling
         static ToDbStorage()
         {
             CRAWLED_LINKS = new List<CrawledLink>();
-            LINKS =         new List<Link>();
-            UPDATED =       new List<string>();
+            LINKS = new List<Link>();
+            UPDATED = new List<string>();
         }
 
         public static void Write()
         {
-            //Storage.UpdateCrawledLinks(UPDATED);
-            Storage.WriteLinks(LINKS);
-            Storage.WriteLinks(CRAWLED_LINKS);
+            lock (UPDATED)
+            {
+                lock (CRAWLED_LINKS)
+                {
+                    lock (LINKS)
+                    {
+                        Storage.UpdateCrawledLinks(UPDATED);
+                        Storage.WriteLinks(LINKS);
+                        Storage.WriteLinks(CRAWLED_LINKS);
 
-            CRAWLED_LINKS.Clear();
-            LINKS.Clear();
-            UPDATED.Clear();
+                        CRAWLED_LINKS.Clear();
+                        LINKS.Clear();
+                        UPDATED.Clear();
+                    }
+                }
+            }
         }
 
         public static void Add(List<CrawledLink> crawledLinks, string updated)

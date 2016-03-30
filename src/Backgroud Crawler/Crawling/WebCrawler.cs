@@ -9,7 +9,7 @@ namespace Backgroud_Crawler.Crawling
 {
     public class WebCrawler : Threaded
     {
-        private const int MAX_THREADS = 100;
+        private const int MAX_THREADS = 1;
         private readonly List<Thread> _threads;
 
         public WebCrawler()

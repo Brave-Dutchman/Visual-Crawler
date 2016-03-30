@@ -260,7 +260,7 @@ namespace Core
 
         private static string CreateUpdateCrawledLinkQuery(string link)
         {
-            return string.Format("update {0} set IsCrawled=1 where Link='{1}')", CRAWLEDLINKNAME, link);
+            return string.Format("update {0} set IsCrawled=1 where Link='{1}'", CRAWLEDLINKNAME, link);
         }
 
         /// <summary>

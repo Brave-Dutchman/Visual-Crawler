@@ -51,6 +51,9 @@ namespace Core
             CheckCreateTable(CRAWLEDLINKNAME, 1);
         }
 
+        /// <summary>
+        /// Connect to database.
+        /// </summary>
         private static void Connect()
         {
             if (_connectionState == false)

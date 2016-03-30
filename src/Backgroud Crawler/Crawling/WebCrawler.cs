@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
-using Core;
 using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
@@ -31,14 +29,13 @@ namespace Backgroud_Crawler.Crawling
             try
             {
                 WebRequest myWebRequest = WebRequest.Create(webUrl);
-
                 using (WebResponse myWebResponse = myWebRequest.GetResponse())
                 {
                     using (Stream streamResponse = myWebResponse.GetResponseStream())
                     {
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
-                            CrawlingStorage.AddFound(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse)); 
+                            CrawlingStorage.AddFound(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse));
                             //Console.WriteLine("Crawled: {0}\n", myWebResponse.ResponseUri); //Reads it to the end
                         }
                     }

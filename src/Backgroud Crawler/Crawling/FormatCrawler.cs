@@ -10,8 +10,14 @@ namespace Backgroud_Crawler.Crawling
 {
     public class FormatCrawler : Threaded
     {
-        List<CrawledLink> crawled = new List<CrawledLink>();
-        List<Link> links = new List<Link>();
+        private readonly List<CrawledLink> _crawled;
+        private readonly List<Link> _links;
+
+        public FormatCrawler()
+        {
+            _crawled = new List<CrawledLink>();
+            _links = new List<Link>();
+        }
 
         public override void Run()
         {
@@ -53,26 +59,26 @@ namespace Backgroud_Crawler.Crawling
 
                 if (crawledContent.Header == url || url.Contains("?") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
-                if (!crawled.ContainsCrawled(url) && !Storage.CheckCrawledLinksDouble(url))
+                if (!_crawled.ContainsCrawled(url) && !Storage.CheckCrawledLinksDouble(url))
                 {
-                    crawled.Add(new CrawledLink(url));
+                    _crawled.Add(new CrawledLink(url));
                 }
 
-                if (links.ContainsLink(crawledContent.Url, url))
+                if (_links.ContainsLink(crawledContent.Url, url))
                 {
-                    links.FindLink(crawledContent.Url, url).TimesOnPage++;
+                    _links.FindLink(crawledContent.Url, url).TimesOnPage++;
                 }
                 else
                 {
-                    links.Add(new Link(crawledContent.Host, crawledContent.Url, url));
+                    _links.Add(new Link(crawledContent.Host, crawledContent.Url, url));
                 }
             }
 
-            ToDbStorage.Add(crawled);
-            crawled.Clear();
+            ToDbStorage.Add(_crawled);
+            _crawled.Clear();
 
-            ToDbStorage.Add(links);
-            links.Clear();
+            ToDbStorage.Add(_links);
+            _links.Clear();
 
             Console.WriteLine("Formated: {0}\n", crawledContent.Url);
         }

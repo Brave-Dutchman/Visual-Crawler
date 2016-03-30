@@ -11,7 +11,7 @@ namespace Backgroud_Crawler
 {
     public class CrawlerController
     {
-        private const int MAX_CRAWLERS = 5;
+        private const int MAX_CRAWLERS = 2;
         private readonly PerformanceCounter _cpuCounter;
         private readonly WebCrawler _crawler;
 

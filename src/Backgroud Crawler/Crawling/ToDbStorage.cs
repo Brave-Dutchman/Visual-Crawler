@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core;
 using Core.Objects;
 
@@ -8,52 +9,50 @@ namespace Backgroud_Crawler.Crawling
     public class ToDbStorage
     {
         private const int MAX = 1000;
-
-        private static readonly List<Link> _links;
-        private static readonly List<CrawledLink> _crawledLinks;
+        private static readonly List<Link> LINKS;
+        private static readonly List<CrawledLink> CRAWLED_LINKS;
 
         static ToDbStorage()
         {
-            _links = new List<Link>();
-            _crawledLinks = new List<CrawledLink>();
+            LINKS = new List<Link>();
+            CRAWLED_LINKS = new List<CrawledLink>();
         }
 
         public static void Add(List<CrawledLink> crawledLinks)
         {
-            lock (_crawledLinks)
+            List<CrawledLink> links;
+
+            lock (CRAWLED_LINKS)
             {
-                Console.WriteLine("Set lock crawled");
+                CRAWLED_LINKS.AddRange(crawledLinks);
 
-                _crawledLinks.AddRange(crawledLinks);
+                if (CRAWLED_LINKS.Count <= MAX) return;
 
-                //if (_crawledLinks.Count > MAX)
-                //{
-                //    Storage.WriteLinks(_crawledLinks);
-                //    Console.WriteLine("Wrote CrawledLinks to database");
-                //    _crawledLinks.Clear();
-                //}
+                Console.WriteLine("Wrote CrawledLinks to database");
+                links = CRAWLED_LINKS.ToList();
+                CRAWLED_LINKS.Clear();
             }
 
-            Console.WriteLine("removed lock crawled");
+            Storage.WriteLinks(links);
+
         }
 
         public static void Add(List<Link> links)
         {
-            lock (_links)
+            List<Link> theLinks;
+
+            lock (LINKS)
             {
-                Console.WriteLine("Set lock links");
+                LINKS.AddRange(links);
 
-                _links.AddRange(links);
+                if (LINKS.Count <= MAX) return;
 
-                //if (_links.Count >= MAX)
-                //{
-                //    Storage.WriteLinks(_links);
-                //    Console.WriteLine("Wrote Links to database");
-                //    _links.Clear();
-                //}
+                Console.WriteLine("Wrote Links to database");
+                theLinks = LINKS.ToList();
+                LINKS.Clear();
             }
 
-            Console.WriteLine("removed lock crawled");
+            Storage.WriteLinks(theLinks);
         }
     }
 }

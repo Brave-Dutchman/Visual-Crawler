@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Core;
 using Core.Objects;
 
@@ -11,26 +10,24 @@ namespace Backgroud_Crawler.Crawling
 
         static CrawlingStorage()
         {
-            _linksToCrawl = Storage.GetCrawledLinks();
+            _linksToCrawl = Storage.ReadNotCrawledLinks();
+        }
+
+        public static void UpdateStorage()
+        {
+            lock (_linksToCrawl)
+            {
+                _linksToCrawl = Storage.ReadNotCrawledLinks();
+            }
         }
 
         public static CrawledLink GetCrawledLink()
-        { 
+        {
             lock (_linksToCrawl)
             {
-                if (_linksToCrawl.Count <= 0)
-                {
-                    _linksToCrawl = Storage.GetCrawledLinks();
-                }
-                
-                try
-                {
-                    return _linksToCrawl.Pop();
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
+                if (_linksToCrawl.Count <= 0) return null;
+
+                return _linksToCrawl.Pop();
             }
         }
     }

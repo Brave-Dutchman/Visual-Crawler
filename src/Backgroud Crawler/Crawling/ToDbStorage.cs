@@ -22,9 +22,9 @@ namespace Backgroud_Crawler.Crawling
 
         public static void Write()
         {
-            StorageJson.UpdateCrawledLinks(UPDATED);
-            StorageJson.WriteLinks(LINKS);
-            StorageJson.WriteLinks(CRAWLED_LINKS);
+            //Storage.UpdateCrawledLinks(UPDATED);
+            Storage.WriteLinks(LINKS);
+            Storage.WriteLinks(CRAWLED_LINKS);
 
             CRAWLED_LINKS.Clear();
             LINKS.Clear();

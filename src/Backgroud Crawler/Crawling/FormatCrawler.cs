@@ -46,7 +46,7 @@ namespace Backgroud_Crawler.Crawling
 
                 if (_crawledContent.Header == url || url.Contains("?") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
-                if (!StorageJson.CheckCrawledLinksDouble(url))
+                if (!Storage.CheckCrawledLinksDouble(url))
                 {
                     _crawled.Add(new CrawledLink(url));
                 }

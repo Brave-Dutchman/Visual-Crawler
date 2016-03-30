@@ -10,14 +10,14 @@ namespace Backgroud_Crawler.Crawling
 
         static CrawlingStorage()
         {
-            _linksToCrawl = StorageJson.ReadNotCrawledLinks();
+            _linksToCrawl = Storage.ReadNotCrawledLinks();
         }
 
         public static void UpdateStorage()
         {
             lock (_linksToCrawl)
             {
-                _linksToCrawl = StorageJson.ReadNotCrawledLinks();
+                _linksToCrawl = Storage.ReadNotCrawledLinks();
             }
         }
 

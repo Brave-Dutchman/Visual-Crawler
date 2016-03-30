@@ -21,7 +21,7 @@ namespace Backgroud_Crawler
             //TODO remove this or make a check
 
             const string url = "https://en.wikipedia.org/wiki/Frank_Matson";
-            StorageJson.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
+            Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
 
             _cpuCounter = new PerformanceCounter
             {

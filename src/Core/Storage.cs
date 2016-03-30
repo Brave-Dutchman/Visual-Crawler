@@ -22,6 +22,7 @@ namespace Core
         private  const string CRAWLEDLINKNAME = "CrawledLink";      //Value for CrawledLink tablename
         private static string _dbConn;                              //Connection string
         private static string _filePath;                            //The Database filename with complete path
+        private static bool _connectionState;
 
         /// <summary>
         ///     Constructor
@@ -46,21 +47,18 @@ namespace Core
             {
                 CreateDatabaseFile();
             }
-
-            using (_dbConnection = new SQLiteConnection(_dbConn))
-            {
-                _dbConnection.Open();
+                Connect();
                 CheckCreateTable(LINKNAME, 0);
-                CheckCreateTable(CRAWLEDLINKNAME, 1);
-                Disconnect();
-            }
+                CheckCreateTable(CRAWLEDLINKNAME, 1);                  
         }
 
         private static void Connect()
         {
-            if (_dbConnection.State == ConnectionState.Closed)
+            if (_connectionState == false)
             {
                 _dbConnection = new SQLiteConnection(_dbConn);
+                _dbConnection.Open();
+                _connectionState = true;
             }
 
         }
@@ -70,9 +68,10 @@ namespace Core
         /// </summary>
         private static void Disconnect()
         {
-            if (_dbConnection.State != ConnectionState.Closed)
+            if (_connectionState)
             {
                 _dbConnection.Close();
+                _connectionState = false;
             }
         }
 
@@ -96,7 +95,6 @@ namespace Core
             string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", tablename);
             using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
             {
-
                 if (!command.ExecuteReader().HasRows)
                 {
                     if (type == 0) //Link datatype
@@ -167,12 +165,20 @@ namespace Core
         /// <param name="links">List of Links</param>
         public static void WriteLinks(List<Link> links)
         {
+            using (SQLiteCommand command = new SQLiteCommand("begin", _dbConnection))
+            {
+                command.ExecuteNonQuery();
+            }
             foreach (Link link in links)
             {
                 //if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteLinkQuery(link));
                 }
+            }
+            using (SQLiteCommand command = new SQLiteCommand("end", _dbConnection))
+            {
+                command.ExecuteNonQuery();
             }
         }
 
@@ -182,12 +188,20 @@ namespace Core
         /// <param name="links">List of CrawledLinks</param>
         public static void WriteLinks(List<CrawledLink> links)
         {
+            using (SQLiteCommand command = new SQLiteCommand("begin", _dbConnection))
+            {
+                command.ExecuteNonQuery();
+            }
             foreach (CrawledLink link in links)
             {
                 //if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteCrawledLinkQuery(link));
                 }
+            }
+            using (SQLiteCommand command = new SQLiteCommand("end", _dbConnection))
+            {
+                command.ExecuteNonQuery();
             }
         }
 
@@ -249,12 +263,10 @@ namespace Core
         /// <param name="sql">SQL query string</param>
         private static async void ExecuteQuery(string sql)
         {
-            Connect();
             using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
             {
                 await command.ExecuteNonQueryAsync();
             }
-            Disconnect();
         }
 
         /// <summary>
@@ -264,13 +276,11 @@ namespace Core
         /// <returns>SQLite Reader</returns>
         private static SQLiteDataReader ExecuteReader(string sql)
         {
-            Connect();
             SQLiteDataReader reader;
             using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
             {
                 reader = command.ExecuteReader();
             }
-            Disconnect();
             return reader;
         }
 

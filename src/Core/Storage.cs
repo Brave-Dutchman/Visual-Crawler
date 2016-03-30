@@ -41,7 +41,7 @@ namespace Core
         private static void Enable()
         {
             _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
-            _dbConn = string.Format("Data Source={0};Version=3", _filePath);
+            _dbConn = string.Format("Data Source={0};Version=3;Compress=True;", _filePath);
 
             if (!File.Exists(_filePath))
             {

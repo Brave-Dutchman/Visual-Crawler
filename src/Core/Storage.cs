@@ -118,7 +118,7 @@ namespace Core
         ///     Fetch the CrawledLinks from the database and return them in a list.
         /// </summary>
         /// <returns>List of CrawledLinks</returns>
-        public static Stack<CrawledLink> GetCrawledLinks()
+        public static List<CrawledLink> GetCrawledLinks()
         {
             return ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME)));
         }
@@ -269,16 +269,39 @@ namespace Core
         /// </summary>
         /// <param name="reader">SQL Reader</param>
         /// <returns>List of CrawledLinks</returns>
-        private static Stack<CrawledLink> ReadCrawledLinks(SQLiteDataReader reader)
+        private static List<CrawledLink> ReadCrawledLinks(SQLiteDataReader reader)
         {
-            Stack<CrawledLink> stack = new Stack<CrawledLink>();
+            List<CrawledLink> stack = new List<CrawledLink>();
 
             while (reader.Read())
             {
                 CrawledLink link = new CrawledLink(reader["Link"].ToString(), ConvertIntToBool((int)reader["IsCrawled"]));
-                stack.Push(link);
+                stack.Add(link);
             }
             return stack;
+        }
+
+        public static Stack<CrawledLink> ReadNotCrawledLinks()
+        {
+            Stack<CrawledLink> crawled = new Stack<CrawledLink>();
+
+            int count = 0;
+
+            foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME))))
+            {
+                if (!link.IsCrawled)
+                {
+                    crawled.Push(link);
+                    count++;
+                }
+
+                if (count >= 100)
+                {
+                    break;
+                }
+            }
+
+            return crawled;
         }
     }
 }

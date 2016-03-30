@@ -24,7 +24,18 @@ namespace Backgroud_Crawler.Crawling
                 if (_threads.Count < MAX_THREADS)
                 {
                     string url = CrawlingStorage.GetCrawledLink().Link;
-                    Crawler(url);
+
+                    if (url != null)
+                    {
+                        Crawler(url);
+                    }
+                    else
+                    {
+                        if (_threads.Count == 0)
+                        {
+                            CrawlingStorage.UpdateStorage();
+                        }
+                    }
                 }
                 else
                 {

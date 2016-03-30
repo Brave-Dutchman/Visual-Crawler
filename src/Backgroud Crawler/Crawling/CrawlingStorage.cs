@@ -13,7 +13,7 @@ namespace Backgroud_Crawler.Crawling
             _linksToCrawl = Storage.ReadNotCrawledLinks();
         }
 
-        public static void UpdateStorage()
+        public static void GetNewLinks()
         {
             lock (_linksToCrawl)
             {

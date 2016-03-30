@@ -10,7 +10,7 @@ namespace Backgroud_Crawler.Crawling
     public class WebCrawler : Threaded
     {
         private const int MAX_THREADS = 5;
-        private List<Thread> _threads;
+        private readonly List<Thread> _threads;
 
         public WebCrawler()
         {
@@ -21,18 +21,25 @@ namespace Backgroud_Crawler.Crawling
         {
             while (!Stop)
             {
-                if (_threads.Count < 5)
+                if (_threads.Count < MAX_THREADS)
                 {
                     string url = CrawlingStorage.GetCrawledLink().Link;
                     Crawler(url);
                 }
                 else
                 {
-                    for (int i = _threads.Count -1; i >= 0 ; i--)
+                    try
                     {
-                        if (_threads[i].IsAlive) continue;
- 
-                        _threads.RemoveAt(i);
+                        for (int i = _threads.Count - 1; i >= 0; i--)
+                        {
+                            if (_threads[i].IsAlive) continue;
+
+                            _threads.RemoveAt(i);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _threads.Clear();
                     }
                 }
 

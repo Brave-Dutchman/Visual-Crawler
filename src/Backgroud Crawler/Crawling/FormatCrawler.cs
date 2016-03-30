@@ -40,8 +40,7 @@ namespace Backgroud_Crawler.Crawling
                 {
                     url = _crawledContent.Scheme + ":" + url;
                 }
-
-                if (!url.StartsWith("http"))
+                else if (!url.StartsWith("http"))
                 {
                     url = _crawledContent.Header + url;
                 }
@@ -63,10 +62,10 @@ namespace Backgroud_Crawler.Crawling
                 }
             }
 
-            ToDbStorage.Add(_crawled);
-            ToDbStorage.Add(_links);
+            Storage.WriteLinks(_crawled);
+            Storage.WriteLinks(_links);
 
-            Console.WriteLine("Formated: {0}\n", _crawledContent.Url);
+            Console.WriteLine("Formated: {0}", _crawledContent.Url);
         }
     }
 }

@@ -23,15 +23,15 @@ namespace Backgroud_Crawler.Crawling
             {
                 if (_threads.Count < MAX_THREADS)
                 {
-                    string url = CrawlingStorage.GetCrawledLink().Link;
+                    CrawledLink craweledLink = CrawlingStorage.GetCrawledLink();
 
-                    if (url != null)
+                    if (craweledLink != null)
                     {
-                        Crawler(url);
+                        Crawler(craweledLink.Link);
                     }
                     else
                     {
-                        if (_threads.Count == 0)
+                        if (_threads.Count <= 0)
                         {
                             CrawlingStorage.UpdateStorage();
                         }
@@ -69,7 +69,7 @@ namespace Backgroud_Crawler.Crawling
                     {
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
-                            Console.WriteLine("Crawled: {0}\n", myWebResponse.ResponseUri); //Reads it to the end
+                            Console.WriteLine("Crawled: {0}", myWebResponse.ResponseUri); //Reads it to the end
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse));

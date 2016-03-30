@@ -8,7 +8,5 @@
         {
             Stop = false;
         }
-
-        public abstract void Run();
     }
 }

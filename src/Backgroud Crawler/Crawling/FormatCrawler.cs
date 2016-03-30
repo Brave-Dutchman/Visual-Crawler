@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Core;
 using Core.Objects;
 
@@ -13,34 +12,24 @@ namespace Backgroud_Crawler.Crawling
         private readonly List<CrawledLink> _crawled;
         private readonly List<Link> _links;
 
+        private CrawledContent _crawledContent;
+
         public FormatCrawler()
         {
             _crawled = new List<CrawledLink>();
             _links = new List<Link>();
         }
 
-        public override void Run()
+        public void Set(CrawledContent crawledContent)
         {
-            while (!Stop)
-            {
-                CrawledContent crawled = CrawlingStorage.GetNewContent();
-
-                if (crawled != null)
-                {
-                    Format(crawled);
-                }
-                else
-                {
-                    Thread.Sleep(1000);
-                }
-            }
+            _crawledContent = crawledContent;
         }
 
-        public void Format(CrawledContent crawledContent)
+        public void Format()
         {
             Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
 
-            MatchCollection matches = regexLink.Matches(crawledContent.Content);
+            MatchCollection matches = regexLink.Matches(_crawledContent.Content);
 
             foreach (object match in matches)
             {
@@ -49,38 +38,35 @@ namespace Backgroud_Crawler.Crawling
 
                 if (url.StartsWith("//"))
                 {
-                    url = crawledContent.Scheme + ":" + url;
+                    url = _crawledContent.Scheme + ":" + url;
                 }
 
                 if (!url.StartsWith("http"))
                 {
-                    url = crawledContent.Header + url;
+                    url = _crawledContent.Header + url;
                 }
 
-                if (crawledContent.Header == url || url.Contains("?") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
+                if (_crawledContent.Header == url || url.Contains("?") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
                 if (!_crawled.ContainsCrawled(url) && !Storage.CheckCrawledLinksDouble(url))
                 {
                     _crawled.Add(new CrawledLink(url));
                 }
 
-                if (_links.ContainsLink(crawledContent.Url, url))
+                if (_links.ContainsLink(_crawledContent.Url, url))
                 {
-                    _links.FindLink(crawledContent.Url, url).TimesOnPage++;
+                    _links.FindLink(_crawledContent.Url, url).TimesOnPage++;
                 }
                 else
                 {
-                    _links.Add(new Link(crawledContent.Host, crawledContent.Url, url));
+                    _links.Add(new Link(_crawledContent.Host, _crawledContent.Url, url));
                 }
             }
 
             ToDbStorage.Add(_crawled);
-            _crawled.Clear();
-
             ToDbStorage.Add(_links);
-            _links.Clear();
 
-            Console.WriteLine("Formated: {0}\n", crawledContent.Url);
+            Console.WriteLine("Formated: {0}\n", _crawledContent.Url);
         }
     }
 }

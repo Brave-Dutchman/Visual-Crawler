@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using Backgroud_Crawler.Crawling;
 using Core;
 using Core.Objects;
@@ -11,17 +9,14 @@ namespace Backgroud_Crawler
 {
     public class CrawlerController
     {
-        private const int MAX_CRAWLERS = 2;
         private readonly PerformanceCounter _cpuCounter;
         private readonly WebCrawler _crawler;
 
-        private readonly List<FormatCrawler> _formatCrawlers;
         private bool _stop;
 
         public CrawlerController()
         {
             _crawler = new WebCrawler();
-            _formatCrawlers = new List<FormatCrawler> { new FormatCrawler() };
 
             //TODO remove this or make a check
             const string url = "https://en.wikipedia.org/wiki/Frank_Matson";
@@ -42,56 +37,43 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
-            StartTask(_crawler);
-            foreach (FormatCrawler crawler in _formatCrawlers)
-            {
-                StartTask(crawler);
-            }
+            Start(_crawler);
+
+            bool isWaiting = false;
 
             while (!_stop)
             {
                 float cpu = GetCurrentCpuUsage();
 
-                if (cpu > 80)
+                if (cpu > 60)
                 {
-                    if (_formatCrawlers.Count > 0)
-                    {
-                        int index = _formatCrawlers.Count - 1;
-
-                        _formatCrawlers[index].Stop = true;
-                        _formatCrawlers.RemoveAt(index);
-                        Console.WriteLine("Removed a FormatCrawler, {0}", _formatCrawlers.Count);
-                    }
+                    isWaiting = true;
+                    _crawler.Stop = true;
                 }
-                else if (cpu < 50)
+                else if (isWaiting && cpu < 20)
                 {
-                    if (_formatCrawlers.Count < MAX_CRAWLERS)
-                    {
-                        FormatCrawler crawler = new FormatCrawler();
-                        _formatCrawlers.Add(crawler);
-                        StartTask(crawler);
-                        Console.WriteLine("Created new FormatCrawler, {0}", _formatCrawlers.Count);
-                    }
-                }
+                    isWaiting = false;
+                    _crawler.Stop = false;
 
-                Thread.Sleep(1000);
+                    Start(_crawler);
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                }
             }
         }
 
-        private static void StartTask(Threaded threaded)
+        private static void Start(WebCrawler webCrawler)
         {
-            Task.Run(() => { threaded.Run(); });
+            Thread thread = new Thread(webCrawler.Run);
+            thread.Start();
         }
 
         public void Stop()
         {
             _stop = true;
             _crawler.Stop = true;
-
-            foreach (FormatCrawler crawler in _formatCrawlers)
-            {
-                crawler.Stop = true;
-            }
         }
     }
 }

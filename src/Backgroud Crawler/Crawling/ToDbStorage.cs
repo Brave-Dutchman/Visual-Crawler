@@ -28,13 +28,14 @@ namespace Backgroud_Crawler.Crawling
 
                 if (CRAWLED_LINKS.Count <= MAX) return;
 
-                Console.WriteLine("Wrote CrawledLinks to database");
+                
                 links = CRAWLED_LINKS.ToList();
                 CRAWLED_LINKS.Clear();
             }
 
+            Console.WriteLine("Started writing CrawledLinks to database");
             Storage.WriteLinks(links);
-
+            Console.WriteLine("Wrote CrawledLinks to database");
         }
 
         public static void Add(List<Link> links)
@@ -47,12 +48,13 @@ namespace Backgroud_Crawler.Crawling
 
                 if (LINKS.Count <= MAX) return;
 
-                Console.WriteLine("Wrote Links to database");
                 theLinks = LINKS.ToList();
                 LINKS.Clear();
             }
 
+            Console.WriteLine("Started writing Links to database");
             Storage.WriteLinks(theLinks);
+            Console.WriteLine("Wrote Links to database");
         }
     }
 }

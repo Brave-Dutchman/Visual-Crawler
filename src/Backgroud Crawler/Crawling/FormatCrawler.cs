@@ -28,7 +28,6 @@ namespace Backgroud_Crawler.Crawling
         public void Format()
         {
             Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
-
             MatchCollection matches = regexLink.Matches(_crawledContent.Content);
 
             foreach (object match in matches)
@@ -47,7 +46,7 @@ namespace Backgroud_Crawler.Crawling
 
                 if (_crawledContent.Header == url || url.Contains("?") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
-                if (!_crawled.ContainsCrawled(url) && !Storage.CheckCrawledLinksDouble(url))
+                if (!StorageJson.CheckCrawledLinksDouble(url))
                 {
                     _crawled.Add(new CrawledLink(url));
                 }
@@ -62,8 +61,8 @@ namespace Backgroud_Crawler.Crawling
                 }
             }
 
-            Storage.WriteLinks(_crawled);
-            Storage.WriteLinks(_links);
+            ToDbStorage.Add(_crawled, _crawledContent.Url);
+            ToDbStorage.Add(_links);
 
             Console.WriteLine("Formated: {0}", _crawledContent.Url);
         }

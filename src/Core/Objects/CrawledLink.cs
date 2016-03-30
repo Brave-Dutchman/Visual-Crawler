@@ -1,10 +1,15 @@
-﻿namespace Core.Objects
+﻿using Newtonsoft.Json;
+
+namespace Core.Objects
 {
     public class CrawledLink
     {
         public string Link { get; set; }
 
         public bool IsCrawled { get; set; }
+
+        [JsonConstructor]
+        public CrawledLink() { }
 
         public CrawledLink(string link)
         {

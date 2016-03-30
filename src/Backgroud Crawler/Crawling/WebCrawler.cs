@@ -33,25 +33,24 @@ namespace Backgroud_Crawler.Crawling
                     {
                         if (_threads.Count <= 0)
                         {
+                            Console.WriteLine("\n{0}\n", "Getting new links");
+                            ToDbStorage.Write();
                             CrawlingStorage.UpdateStorage();
                         }
                     }
                 }
-                else
-                {
-                    try
-                    {
-                        for (int i = _threads.Count - 1; i >= 0; i--)
-                        {
-                            if (_threads[i].IsAlive) continue;
 
-                            _threads.RemoveAt(i);
-                        }
-                    }
-                    catch (Exception)
+                try
+                {
+                    for (int i = _threads.Count - 1; i >= 0; i--)
                     {
-                        _threads.Clear();
+                        if (_threads[i].IsAlive) continue;
+                        _threads.RemoveAt(i);
                     }
+                }
+                catch (Exception)
+                {
+                    _threads.Clear();
                 }
 
                 Thread.Sleep(1000);
@@ -69,7 +68,7 @@ namespace Backgroud_Crawler.Crawling
                     {
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
-                            Console.WriteLine("Crawled: {0}", myWebResponse.ResponseUri); //Reads it to the end
+                            //Console.WriteLine("Crawled: {0}", myWebResponse.ResponseUri); //Reads it to the end
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse));

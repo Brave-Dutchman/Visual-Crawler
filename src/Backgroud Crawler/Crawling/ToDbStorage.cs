@@ -1,60 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Core;
 using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
 {
-    public class ToDbStorage
+    public static class ToDbStorage
     {
         private const int MAX = 1000;
+
         private static readonly List<Link> LINKS;
         private static readonly List<CrawledLink> CRAWLED_LINKS;
 
+        private static readonly List<string> UPDATED;
+
         static ToDbStorage()
         {
-            LINKS = new List<Link>();
             CRAWLED_LINKS = new List<CrawledLink>();
+            LINKS =         new List<Link>();
+            UPDATED =       new List<string>();
         }
 
-        public static void Add(List<CrawledLink> crawledLinks)
+        public static void Write()
         {
-            List<CrawledLink> links;
+            StorageJson.UpdateCrawledLinks(UPDATED);
+            StorageJson.WriteLinks(LINKS);
+            StorageJson.WriteLinks(CRAWLED_LINKS);
+
+            CRAWLED_LINKS.Clear();
+            LINKS.Clear();
+            UPDATED.Clear();
+        }
+
+        public static void Add(List<CrawledLink> crawledLinks, string updated)
+        {
+            lock (updated)
+            {
+                UPDATED.Add(updated);
+            }
 
             lock (CRAWLED_LINKS)
             {
-                CRAWLED_LINKS.AddRange(crawledLinks);
-
-                if (CRAWLED_LINKS.Count <= MAX) return;
-
-                
-                links = CRAWLED_LINKS.ToList();
-                CRAWLED_LINKS.Clear();
+                foreach (CrawledLink crawledLink in crawledLinks)
+                {
+                    if (!CRAWLED_LINKS.ContainsCrawled(crawledLink.Link))
+                    {
+                        CRAWLED_LINKS.Add(crawledLink);
+                    }
+                }
             }
-
-            Console.WriteLine("Started writing CrawledLinks to database");
-            Storage.WriteLinks(links);
-            Console.WriteLine("Wrote CrawledLinks to database");
         }
 
         public static void Add(List<Link> links)
         {
-            List<Link> theLinks;
-
-            lock (LINKS)
+            lock (CRAWLED_LINKS)
             {
-                LINKS.AddRange(links);
-
-                if (LINKS.Count <= MAX) return;
-
-                theLinks = LINKS.ToList();
-                LINKS.Clear();
+                foreach (Link link in links)
+                {
+                    LINKS.Add(link);
+                }
             }
-
-            Console.WriteLine("Started writing Links to database");
-            Storage.WriteLinks(theLinks);
-            Console.WriteLine("Wrote Links to database");
         }
     }
 }

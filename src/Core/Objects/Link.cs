@@ -1,4 +1,6 @@
-﻿namespace Core.Objects
+﻿using Newtonsoft.Json;
+
+namespace Core.Objects
 {
     public class Link
     {
@@ -7,16 +9,18 @@
         public string   To { get; set; }
         public int TimesOnPage { get; set; }
 
-        private Link()
+        [JsonConstructor]
+        public Link()
         {
-            TimesOnPage = 1;
+            
         }
 
-        public Link(string host, string @from, string to) : this()
+        public Link(string host, string @from, string to)
         {
             Host = host;
             From = @from;
             To = to;
+            TimesOnPage = 1;
         }
 
         public override string ToString()

@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using Core.Objects;
 
 namespace Core
@@ -41,7 +42,7 @@ namespace Core
         private static void Enable()
         {
             _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
-            _dbConn = string.Format("Data Source={0};Version=3", _filePath);
+            _dbConn = string.Format("Data Source={0};Version=3;Compress=True;", _filePath);
 
             if (!File.Exists(_filePath))
             {
@@ -257,6 +258,11 @@ namespace Core
             return string.Format("insert into {0} (Link, IsCrawled) values ('{1}', {2})", CRAWLEDLINKNAME, link.Link, ConvertBoolToInt(link.IsCrawled));
         }
 
+        private static string CreateUpdateCrawledLinkQuery(string link)
+        {
+            return string.Format("update {0} set IsCrawled=1 where Link='{1}')", CRAWLEDLINKNAME, link);
+        }
+
         /// <summary>
         ///     Executes a query using a SQL query string.
         /// </summary>
@@ -299,6 +305,25 @@ namespace Core
                 list.Add(link);
             }
             return list;
+        }
+
+        public static void UpdateCrawledLinks(List<string> links)
+        {
+            using (SQLiteCommand command = new SQLiteCommand("begin", _dbConnection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            foreach (string link in links)
+            {
+                ExecuteQuery(CreateUpdateCrawledLinkQuery(link));
+            }
+
+            using (SQLiteCommand command = new SQLiteCommand("end", _dbConnection))
+            {
+                command.ExecuteNonQuery();
+            }
+            
         }
 
         /// <summary>

@@ -47,10 +47,22 @@ namespace Core
                 CreateDatabaseFile();
             }
 
-            _dbConnection = new SQLiteConnection(_dbConn);
-            _dbConnection.Open();
-            CheckCreateTable(LINKNAME, 0);
-            CheckCreateTable(CRAWLEDLINKNAME, 1);
+            using (_dbConnection = new SQLiteConnection(_dbConn))
+            {
+                _dbConnection.Open();
+                CheckCreateTable(LINKNAME, 0);
+                CheckCreateTable(CRAWLEDLINKNAME, 1);
+                Disconnect();
+            }
+        }
+
+        private static void Connect()
+        {
+            if (_dbConnection.State == ConnectionState.Closed)
+            {
+                _dbConnection = new SQLiteConnection(_dbConn);
+            }
+
         }
 
         /// <summary>
@@ -82,27 +94,33 @@ namespace Core
         private static bool CheckCreateTable(string tablename, int type)
         {
             string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", tablename);
-            SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-
-            if (!command.ExecuteReader().HasRows)
+            using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
             {
-                if (type == 0) //Link datatype
-                {
-                    sql = string.Format("CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)", tablename);
-                }
-                else if (type == 1) //CrawledLink
-                {
-                    sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255), IsCrawled INT);", tablename);
-                }
-                else
-                {
-                    return false;
-                }
 
-                ExecuteQuery(sql);
+                if (!command.ExecuteReader().HasRows)
+                {
+                    if (type == 0) //Link datatype
+                    {
+                        sql =
+                            string.Format(
+                                "CREATE TABLE {0} (Host VARCHAR(255), Origin VARCHAR(255), Destiny VARCHAR(255), TimesOnPage INT)",
+                                tablename);
+                    }
+                    else if (type == 1) //CrawledLink
+                    {
+                        sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255), IsCrawled INT);", tablename);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                    ExecuteQuery(sql);
+                }
             }
-            
+
             return true;
+            
         }
 
         /// <summary>
@@ -110,8 +128,8 @@ namespace Core
         /// </summary>
         /// <returns>List of Links</returns>
         public static List<Link> GetLinks()
-        {
-            return ReadLinks(ExecuteReader(CreateReadQuery(LINKNAME)));
+        {        
+            return ReadLinks(ExecuteReader(CreateReadQuery(LINKNAME)));          
         }
 
         /// <summary>
@@ -231,8 +249,12 @@ namespace Core
         /// <param name="sql">SQL query string</param>
         private static async void ExecuteQuery(string sql)
         {
-            SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-            await command.ExecuteNonQueryAsync();
+            Connect();
+            using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
+            {
+                await command.ExecuteNonQueryAsync();
+            }
+            Disconnect();
         }
 
         /// <summary>
@@ -242,8 +264,13 @@ namespace Core
         /// <returns>SQLite Reader</returns>
         private static SQLiteDataReader ExecuteReader(string sql)
         {
-            SQLiteCommand command = new SQLiteCommand(sql, _dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            Connect();
+            SQLiteDataReader reader;
+            using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
+            {
+                reader = command.ExecuteReader();
+            }
+            Disconnect();
             return reader;
         }
 

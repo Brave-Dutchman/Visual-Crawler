@@ -161,6 +161,16 @@ namespace Core
         }
 
         /// <summary>
+        ///     Create a query for reading from the database
+        /// </summary>
+        /// <param name="table">Tablename</param>
+        /// <returns>SQL query</returns>
+        private static string CreateNotCrawledLinkReadQuery(string table)
+        {
+            return string.Format("select * from {0} where IsCrawled=0 LIMIT 100", table);
+        }
+
+        /// <summary>
         ///     Write Links to database.
         /// </summary>
         /// <param name="links">List of Links</param>
@@ -260,7 +270,7 @@ namespace Core
 
         private static string CreateUpdateCrawledLinkQuery(string link)
         {
-            return string.Format("update {0} set IsCrawled=1 where Link='{1}')", CRAWLEDLINKNAME, link);
+            return string.Format("update {0} set IsCrawled=1 where Link='{1}'", CRAWLEDLINKNAME, link);
         }
 
         /// <summary>
@@ -347,20 +357,21 @@ namespace Core
         {
             Stack<CrawledLink> crawled = new Stack<CrawledLink>();
 
-            int count = 0;
+            //int count = 0;
 
-            foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME))))
+            foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateNotCrawledLinkReadQuery(CRAWLEDLINKNAME))))
             {
-                if (!link.IsCrawled)
-                {
-                    crawled.Push(link);
-                    count++;
-                }
+                crawled.Push(link);
+                //if (!link.IsCrawled)
+                //{
+                //    crawled.Push(link);
+                //    count++;
+                //}
 
-                if (count >= 100)
-                {
-                    break;
-                }
+                //if (count >= 100)
+                //{
+                //    break;
+                //}
             }
 
             return crawled;

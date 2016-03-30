@@ -7,7 +7,6 @@ namespace Backgroud_Crawler.Crawling
     public static class ToDbStorage
     {
         private const int MAX = 1000;
-
         private static readonly List<Link> LINKS;
         private static readonly List<CrawledLink> CRAWLED_LINKS;
 

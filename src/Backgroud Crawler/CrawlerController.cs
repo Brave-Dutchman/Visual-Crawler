@@ -38,11 +38,11 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
+            Storage.Enable();
+
             Start(_crawler);
 
             bool isWaiting = false;
-
-            Storage.Enable();
 
             while (!_stop)
             {

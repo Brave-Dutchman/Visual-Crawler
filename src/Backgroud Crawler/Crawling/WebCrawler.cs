@@ -12,6 +12,13 @@ namespace Backgroud_Crawler.Crawling
             while (!Stop)
             {
                 CrawledLink craweledLink = CrawlingStorage.GetCrawledLink();
+
+                if (craweledLink == null)
+                {
+                    Console.WriteLine("Return null the web is crawled");
+                    break;
+                }
+
                 Crawler(craweledLink.Link);
             }
         }

@@ -19,7 +19,7 @@ namespace Visual_Crawl
             set
             {
                 _link = value;
-                OnPropertyChanged("Link");
+                OnPropertyChanged();
             }
         }
 

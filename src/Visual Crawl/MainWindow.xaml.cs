@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using Core;
 using Core.Objects;
 
@@ -14,86 +12,108 @@ namespace Visual_Crawl
     /// </summary>
     public partial class MainWindow
     {
-        public const double TopStart = 70;
-        public const double DefaultTopMargin = 200;
+        public const double TopStart = 120;
+        public const double DefaultTopMargin = 70;
 
         public const double LeftStart = 70;
-        public const double DefaultLeftMargin = 250;
+        public const double DefaultLeftMargin = 70;
 
-        public List<VisualLink> Links { get; set; }
+        public List<Link> Links { get; set; }
 
         private readonly MultiDimentionalList _multi;
+
 
         public MainWindow()
         {
             InitializeComponent();
-            Links = new List<VisualLink>();
+            Links = new List<Link>();
             _multi = new MultiDimentionalList();
         }
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            foreach (Link link in Storage.GetLinks())
-            {
-                Links.Add(new VisualLink(link));
-            }
+            Links = Storage.GetLinks();
+            Links[0].To = "http://www.insidegamer.nl/";
 
-            //Add the root node
-            _multi.Add(null, Links[0]);
-
-            foreach (VisualLink visualLink in Links)
-            {
-                VisualLink[] arr = GetByFrom(visualLink.Link.To);
-                foreach (VisualLink foundLink in arr)
-                {
-                    _multi.Add(visualLink, foundLink);
-                }
-            }
-
-            PlaceOnField();
+            VisualLink visual = new VisualLink(Links[0], null, GetNumberOfChilderen(Links[0].To));
+            AddLinks(visual, TopStart, LeftStart);
         }
 
-        private void PlaceOnField()
+        private void VisualOnMouseLeftButtonDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            double top = TopStart;
-            double left = LeftStart;
+            VisualLink visual = (VisualLink) sender;
 
-            List<List<ParentChild>> list = _multi.Get();
-
-            foreach (List<ParentChild> parentChildren in list)
+            switch (visual.DisplayedLink)
             {
-                foreach (ParentChild parentChild in parentChildren)
-                {
-                    if (parentChild.Parent != null && left > parentChild.Parent.Left && parentChild.ChildIndex == 0)
-                    {
-                        parentChild.Parent.Left = left;
-                        _multi.ResetByParentIndex(parentChild.Parent);
-                    }
-                    else if (parentChild.Parent != null && left + 50 < parentChild.Parent.Left)
-                    {
-                        double tempLeft = (parentChild.Parent.Left -50) + parentChild.ChildIndex * DefaultLeftMargin;
-                        AddLinks(parentChild.VisualLink, top, tempLeft);
-                        continue;
-                    }
+                case DisplayedLink.Collapsed:
+                    Show(visual);
+                    break;
+                case DisplayedLink.PartVisable:
+                    CheckIfRoot(visual);
+                    Show(visual);
+                    break;
+                case DisplayedLink.FullVisable:
+                    Clear(visual);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
 
-                    AddLinks(parentChild.VisualLink, top, left);
-                    
-                    left += DefaultLeftMargin;
+        private void Clear(VisualLink visual)
+        {
+            visual.DisplayedLink = DisplayedLink.Collapsed;
+        }
+
+        private void CheckIfRoot(VisualLink visual)
+        {
+            if (visual.Parent != null) return;
+
+            const int index = 0;
+            int total = _multi.Count - 1;
+
+            for (int i = total; i > index; i--)
+            {
+                foreach (VisualLink visualLink in _multi.GetByIndex(i).ToArray())
+                {
+                    Field.Children.Remove(visualLink);
+                    _multi.RemoveAt(visualLink, i);
+                }
+            }
+        }
+
+        private void Show(VisualLink visual)
+        {
+            if (visual.Parent != null)
+            {
+                int index = _multi.FindParent(visual.Parent);
+                int total = _multi.Count -1;
+
+                for (int i = total; i > index; i--)
+                {
+                    foreach (VisualLink visualLink in _multi.GetByIndex(i).ToArray())
+                    {
+                        Field.Children.Remove(visualLink);
+                        _multi.RemoveAt(visualLink, i);
+                    }
                 }
 
-                left = LeftStart;
-                top += DefaultTopMargin;
+                AddLinks(visual, visual.Top, visual.Parent.Left);
+                visual.Parent.DisplayedLink = DisplayedLink.PartVisable;
             }
 
-            int count = list[1].Count;
+            StaticDisplay.Link = visual.Link;
 
-            foreach (List<ParentChild> parentChildren in list)
+            int count = 0;
+            foreach (Link connectedLink in GetLinksFrom(visual.Link.To))
             {
-                foreach (ParentChild parentChild in parentChildren)
-                {
-                    DrawLine(parentChild);
-                }
+                VisualLink temp = new VisualLink(connectedLink, visual, GetNumberOfChilderen(connectedLink.To));
+                AddLinks(temp, DefaultTopMargin + visual.Top, visual.Left + count * DefaultLeftMargin);
+                count++;
             }
+
+            Field.Width = count * DefaultLeftMargin + LeftStart + DefaultLeftMargin;
+            visual.DisplayedLink = DisplayedLink.FullVisable;
         }
 
         private void AddLinks(VisualLink visual, double top, double left)
@@ -103,33 +123,20 @@ namespace Visual_Crawl
 
             visual.MouseEnter += VisualOnMouseEnter;
             visual.MouseLeave += VisualOnMouseLeave;
+            visual.MouseLeftButtonDown += VisualOnMouseLeftButtonDown;
 
             Field.Children.Add(visual);
+            _multi.Add(visual);
         }
 
-        private void DrawLine(ParentChild child)
+        private Link[] GetLinksFrom(string link)
         {
-            if (child.Parent == null) return;
-
-            Line line = new Line
-            {
-                Stroke = new SolidColorBrush(Colors.Gray),
-                StrokeThickness = 1
-            };
-
-            Panel.SetZIndex(line, -100);
-
-            line.X1 = child.Parent.CenterLeft;
-            line.Y1 = child.Parent.CenterTop;
-            line.X2 = child.VisualLink.CenterLeft;
-            line.Y2 = child.VisualLink.CenterTop;
-
-            Field.Children.Add(line);
+            return Links.FindAll(x => x.From == link && x.To != link).ToArray();
         }
 
-        private VisualLink[] GetByFrom(string link)
+        private int GetNumberOfChilderen(string link)
         {
-            return Links.FindAll(x => x.Link.From == link && x.Link.To != link).ToArray();
+            return Links.FindAll(x => x.From == link && x.To != link).Count;
         }
 
         private void VisualOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
@@ -139,7 +146,7 @@ namespace Visual_Crawl
 
         private void VisualOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
         {
-            Display.Link = ((VisualLink)sender).Link;
+            Display.Link = ((VisualLink) sender).Link;
         }
     }
 }

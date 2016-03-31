@@ -119,7 +119,6 @@ namespace Core
             }
 
             return true;
-            
         }
 
         /// <summary>

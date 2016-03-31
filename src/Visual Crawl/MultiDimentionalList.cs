@@ -1,106 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.Objects;
 
 namespace Visual_Crawl
 {
     public class MultiDimentionalList
     {
-        private readonly List<List<ParentChild>> _list;
+        private readonly List<List<VisualLink>> _list;
 
         public MultiDimentionalList()
         {
-            _list = new List<List<ParentChild>>();
+            _list = new List<List<VisualLink>>();
         }
 
-        public List<List<ParentChild>> Get()
+        public List<List<VisualLink>> Get()
         {
             return _list;
         }
 
-        public bool Add(VisualLink parent, VisualLink child)
+        public List<VisualLink> GetByIndex(int index)
         {
-            if (parent == null)
+            return _list[index];
+        }
+
+        public void RemoveAt(VisualLink link, int index)
+        {
+            _list[index].Remove(link);
+
+            if (_list[index].Count == 0)
             {
-                AddRoot(new ParentChild(null, child, 0));
-                return true;
+                _list.RemoveAt(index);
+            }
+        }
+
+        public int Count
+        {
+            get { return _list.Count; }
+        }
+
+        public void Add(VisualLink link)
+        {
+            if (link.Parent == null)
+            {
+                _list.Add(new List<VisualLink>());
+                _list[0].Add(link);
+                return;
             }
 
-            int index = GetParentListIndex(parent) + 1;
+            int index = FindParent(link.Parent) + 1;
 
             try
             {
-                _list[index].Add(new ParentChild(parent, child, GetParentCHildren(parent)));
+                _list[index].Add(link);
             }
             catch (Exception)
             {
-                _list.Add(new List<ParentChild>());
-                _list[index].Add(new ParentChild(parent, child, 0));
-            }
-
-            return true;
-        }
-
-        private int GetParentCHildren(VisualLink parent)
-        {
-            int count = 0;
-
-            foreach (List<ParentChild> list in _list)
-            {
-                foreach (ParentChild parentChild in list)
-                {
-                    if (Equals(parentChild.Parent, parent))
-                    {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
-
-        public void AddRoot(ParentChild root)
-        {
-            _list.Add(new List<ParentChild> {root});
-        }
-
-        public void ResetByParentIndex(VisualLink parent)
-        {
-            int index = GetParentListIndex(parent);
-
-            if (index == -1) return;
-
-            bool found = false;
-            int childIndex = -1;
-
-            foreach (ParentChild child in _list[index])
-            {
-                if (found && child.ChildIndex > childIndex)
-                {
-                    child.VisualLink.Left = (_list[index][child.ChildIndex - 1].VisualLink.Left + MainWindow.DefaultLeftMargin) -50;
-                }
-
-                if (Equals(child.VisualLink, parent))
-                {
-                    childIndex = child.ChildIndex;
-                    found = true;
-                }
+                _list.Add(new List<VisualLink>());
+                _list[index].Add(link);
             }
         }
 
-        private int GetParentListIndex(VisualLink parent)
+        public int FindParent(VisualLink parent)
         {
-            foreach (List<ParentChild> list in _list)
+            foreach (List<VisualLink> list in _list)
             {
-                foreach (ParentChild child in list)
+                foreach (VisualLink visualLink in list)
                 {
-                    if (Equals(child.VisualLink, parent))
+                    if (Equals(parent, visualLink))
                     {
                         return _list.IndexOf(list);
                     }
                 }
             }
 
-            //throw new Exception("Parent does not exist, yet :)");
-            return -1;
+            throw new Exception("");
         }
     }
 }

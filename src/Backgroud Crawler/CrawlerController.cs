@@ -10,25 +10,25 @@ namespace Backgroud_Crawler
     public class CrawlerController
     {
         private readonly PerformanceCounter _cpuCounter;
-        private readonly WebCrawler _crawler;
+        private WebCrawler _crawler;
 
         private bool _stop;
 
         public CrawlerController()
         {
-            _crawler = new WebCrawler();
-
-            //TODO remove this or make a check
-
-            const string url = "http://www.insidegamer.nl";
-            Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
-
             _cpuCounter = new PerformanceCounter
             {
                 CategoryName = "Processor",
                 CounterName = "% Processor Time",
                 InstanceName = "_Total"
             };
+        }
+
+        private static void StartUp()
+        {
+            const string url = "http://www.insidegamer.nl";
+            Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
+            Storage.WriteLinks(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
         }
 
         public float GetCurrentCpuUsage()
@@ -38,7 +38,10 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
-            Start(_crawler);
+            StartUp();
+
+            _crawler = new WebCrawler();
+            StartCrawling(_crawler);
 
             bool isWaiting = false;
 
@@ -56,7 +59,7 @@ namespace Backgroud_Crawler
                     isWaiting = false;
                     _crawler.Stop = false;
 
-                    Start(_crawler);
+                    StartCrawling(_crawler);
                 }
                 else
                 {
@@ -65,7 +68,7 @@ namespace Backgroud_Crawler
             }
         }
 
-        private static void Start(WebCrawler webCrawler)
+        private static void StartCrawling(WebCrawler webCrawler)
         {
             Thread thread = new Thread(webCrawler.Run);
             thread.Start();

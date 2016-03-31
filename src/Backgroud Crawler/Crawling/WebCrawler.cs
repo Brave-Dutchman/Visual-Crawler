@@ -1,60 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Threading;
 using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
 {
     public class WebCrawler : Threaded
     {
-        private const int MAX_THREADS = 1;
-        private readonly List<Thread> _threads;
-
-        public WebCrawler()
-        {
-            _threads = new List<Thread>();
-        }
-
         public void Run()
         {
             while (!Stop)
             {
-                if (_threads.Count < MAX_THREADS)
-                {
-                    CrawledLink craweledLink = CrawlingStorage.GetCrawledLink();
+                CrawledLink craweledLink = CrawlingStorage.GetCrawledLink();
 
-                    if (craweledLink != null)
-                    {
-                        Crawler(craweledLink.Link);
-                    }
-                    else
-                    {
-                        if (_threads.Count <= 0)
-                        {
-                            Console.WriteLine("\n{0}", "Saving the old links");
-                            ToDbStorage.Write();
-                            Console.WriteLine("{0}\n", "Getting new links");
-                            CrawlingStorage.GetNewLinks();
-                        }
-                    }
-                }
-
-                try
+                if (craweledLink != null)
                 {
-                    for (int i = _threads.Count - 1; i >= 0; i--)
-                    {
-                        if (_threads[i].IsAlive) continue;
-                        _threads.RemoveAt(i);
-                    }
+                    Crawler(craweledLink.Link);
                 }
-                catch (Exception)
+                else
                 {
-                    _threads.Clear();
+                    Console.WriteLine("\n{0}", "Saving the old links");
+                    ToDbStorage.Write();
+                    Console.WriteLine("{0}\n", "Getting new links");
+                    CrawlingStorage.GetNewLinks();
                 }
-
-               // Thread.Sleep(200);
             }
         }
 
@@ -73,9 +42,7 @@ namespace Backgroud_Crawler.Crawling
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse));
-
-                            _threads.Add(new Thread(crawler.Format));
-                            _threads[_threads.Count -1].Start();
+                            crawler.Format();
                         }
                     }
                 }

@@ -1,18 +1,14 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Controls;
-using Core;
+﻿using System.Windows.Controls;
+using System.Windows.Media;
 using Core.Objects;
-using Visual_Crawl.Annotations;
 
 namespace Visual_Crawl
 {
     /// <summary>
     /// Interaction logic for VisualLink.xaml
     /// </summary>
-    public partial class VisualLink : INotifyPropertyChanged
+    public partial class VisualLink
     {
-        private Link _link;
         private double _left;
         private double _top;
 
@@ -21,7 +17,7 @@ namespace Visual_Crawl
             get { return _left; }
             set
             {
-                _left = Width / 2 + value;
+                _left = /* Width / 2 + */ value;
                 Canvas.SetLeft(this, _left);
             }
         }
@@ -31,56 +27,44 @@ namespace Visual_Crawl
             get { return _top; }
             set
             {
-                _top = Height / 2 + value;
+                _top = /*Height / 2 + */ value;
                 Canvas.SetTop(this, _top);
             }
         }
 
-        public double CenterLeft
-        {
-            get { return _left + 50; }
-        }
+        public new VisualLink Parent { get; set; }
+        public Link Link { get; set; }
 
-        public double CenterTop
-        {
-            get { return _top + 50; }
-        }
+        public int Children { get; set; }
 
-        public Link Link
-        {
-            get { return _link; }
-            set
-            {
-                _link = value; 
-                OnPropertyChanged("Link");
-            }
-        }
+        public DisplayedLink DisplayedLink { get; set; }
 
-        public VisualLink()
-        {
-            InitializeComponent();
-        }
 
-        public VisualLink(Link link) : this()
+        public VisualLink(Link link, VisualLink parent, int children)
         {
             Link = link;
-        }
+            Parent = parent;
+            Children = children;
+            DisplayedLink = DisplayedLink.Collapsed;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+            InitializeComponent();
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
+            if (!Link.To.Contains(Link.Host))
             {
-                handler(this, new PropertyChangedEventArgs(propertyName));
+               Ellipse.Fill = new SolidColorBrush(Colors.Blue);
             }
         }
 
         public override string ToString()
         {
-            return Link.To;
+            return Link.ToString();
         }
     }
+}
+
+public enum DisplayedLink
+{
+    Collapsed,
+    PartVisable,
+    FullVisable
 }

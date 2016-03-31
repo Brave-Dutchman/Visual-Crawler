@@ -8,7 +8,6 @@ namespace Backgroud_Crawler.Crawling
     {
         private static readonly List<Link> LINKS;
         private static readonly List<CrawledLink> CRAWLED_LINKS;
-
         private static readonly List<string> UPDATED;
 
         static ToDbStorage()

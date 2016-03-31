@@ -1,12 +1,14 @@
-﻿namespace Visual_Crawl
+﻿using Core.Objects;
+
+namespace Visual_Crawl
 {
     public class ParentChild
     {
-        public VisualLink Parent { get; set; }
-        public VisualLink VisualLink { get; set; }
+        public Link Parent { get; set; }
+        public Link VisualLink { get; set; }
         public int ChildIndex { get; set; }
 
-        public ParentChild(VisualLink parent, VisualLink visualLink, int childIndex)
+        public ParentChild(Link parent, Link visualLink, int childIndex)
         {
             ChildIndex = childIndex;
             VisualLink = visualLink;
@@ -15,7 +17,7 @@
 
         public override string ToString()
         {
-            return Parent.Link.From + " - " + VisualLink.Link.To;
+            return Parent.From + " - " + VisualLink.To;
         }
     }
 }

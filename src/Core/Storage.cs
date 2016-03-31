@@ -21,14 +21,14 @@ namespace Core
         private static SQLiteConnection _dbConnection; //Connection to database
         private static string _dbConn; //Connection string
         private static string _filePath; //The Database filename with complete path
-        private static bool _connectionState;
+        private static bool _connectionState; //Connection is open or closed
 
         /// <summary>
         ///     Constructor
         /// </summary>
         static Storage()
         {
-            Enable();
+            //Enable();
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Core
         ///     Also creates the needed tables when creating a new database.
         ///     Opens the connection.
         /// </summary>
-        private static void Enable()
+        public static void Enable()
         {
             _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
             _dbConn = string.Format("Data Source={0};Version=3;Compress=True;", _filePath);
@@ -54,7 +54,7 @@ namespace Core
         /// <summary>
         /// Connect to database.
         /// </summary>
-        private static void Connect()
+        public static void Connect()
         {
             if (_connectionState == false)
             {
@@ -67,7 +67,7 @@ namespace Core
         /// <summary>
         ///     Close the database connection.
         /// </summary>
-        private static void Disconnect()
+        public static void Disconnect()
         {
             if (_connectionState)
             {
@@ -91,7 +91,7 @@ namespace Core
         /// <param name="tablename">Name of the table</param>
         /// <param name="type">Tabletype: 0 for Link, 1 for CrawledLink</param>
         /// <returns>Succes/Failure</returns>
-        private static bool CheckCreateTable(string tablename, int type)
+        private static void CheckCreateTable(string tablename, int type)
         {
             string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", tablename);
             using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
@@ -108,17 +108,11 @@ namespace Core
                     else if (type == 1) //CrawledLink
                     {
                         sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255), IsCrawled INT);", tablename);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
+                    }               
                     ExecuteQuery(sql);
                 }
             }
-
-            return true;
+     
         }
 
         /// <summary>
@@ -191,7 +185,6 @@ namespace Core
             }
             foreach (Link link in links)
             {
-                //if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteLinkQuery(link));
                 }
@@ -213,8 +206,7 @@ namespace Core
                 command.ExecuteNonQuery();
             }
             foreach (CrawledLink link in links)
-            {
-                //if (!CheckDoubles(link))
+            {                
                 {
                     ExecuteQuery(CreateWriteCrawledLinkQuery(link));
                 }
@@ -225,25 +217,7 @@ namespace Core
             }
         }
 
-        /// <summary>
-        ///     Check for double Link and CrawledLink entries
-        /// </summary>
-        /// <param name="item">Link/CrawledLink</param>
-        /// <returns>Boolean True/False</returns>
-        private static bool CheckDoubles(object item)
-        {
-            if (item.GetType() == typeof (Link))
-            {
-                return CheckLinksDouble((Link) item);
-            }
-
-            if (item.GetType() == typeof (CrawledLink))
-            {
-                return CheckCrawledLinksDouble(((CrawledLink) item).Link);
-            }
-
-            return false;
-        }
+  
 
         /// <summary>
         /// Check for double links
@@ -352,12 +326,10 @@ namespace Core
             {
                 command.ExecuteNonQuery();
             }
-
             foreach (string link in links)
             {
                 ExecuteQuery(CreateUpdateCrawledLinkQuery(link));
             }
-
             using (SQLiteCommand command = new SQLiteCommand("end", _dbConnection))
             {
                 command.ExecuteNonQuery();
@@ -389,25 +361,11 @@ namespace Core
         public static Stack<CrawledLink> ReadNotCrawledLinks()
         {
             Stack<CrawledLink> crawled = new Stack<CrawledLink>();
-
-            //int count = 0;
-
             foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateNotCrawledLinkReadQuery(CRAWLEDLINKNAME))))
                 
             {
-                crawled.Push(link);
-                //if (!link.IsCrawled)
-                //{
-                //    crawled.Push(link);
-                //    count++;
-                //}
-
-                //if (count >= 100)
-                //{
-                //    break;
-                //}
+                crawled.Push(link);       
             }
-
             return crawled;
         }
     }

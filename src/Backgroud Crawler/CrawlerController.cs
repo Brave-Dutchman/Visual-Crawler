@@ -75,6 +75,7 @@ namespace Backgroud_Crawler
         {
             _stop = true;
             _crawler.Stop = true;
+            Storage.Disconnect();
         }
     }
 }

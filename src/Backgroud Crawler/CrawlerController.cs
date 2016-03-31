@@ -42,6 +42,8 @@ namespace Backgroud_Crawler
 
             bool isWaiting = false;
 
+            Storage.Enable();
+
             while (!_stop)
             {
                 float cpu = GetCurrentCpuUsage();

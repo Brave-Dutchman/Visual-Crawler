@@ -38,10 +38,17 @@ namespace Backgroud_Crawler.Crawling
                     {
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
-                            Console.WriteLine("Crawled: {0}", myWebResponse.ResponseUri); //Reads it to the end
+
+                            string url = myWebResponse.ResponseUri.ToString();
+                            if (url.EndsWith("/"))
+                            {
+                                url = url.Substring(0, url.Length - 1);
+                            }
+
+                            Console.WriteLine("Crawled: {0}", url); //Reads it to the end
 
                             FormatCrawler crawler = new FormatCrawler();
-                            crawler.Set(new CrawledContent(myWebResponse.ResponseUri.ToString(), sreader.ReadToEnd(), myWebResponse));
+                            crawler.Set(new CrawledContent(url, sreader.ReadToEnd(), myWebResponse));
                             crawler.Format();
                         }
                     }

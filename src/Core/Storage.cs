@@ -37,18 +37,24 @@ namespace Core
         ///     Also creates the needed tables when creating a new database.
         ///     Opens the connection.
         /// </summary>
-        public static void Enable()
+        public static bool Enable()
         {
+            bool exist = true;
+
             _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
             _dbConn = string.Format("Data Source={0};Version=3;Compress=True;", _filePath);
 
             if (!File.Exists(_filePath))
             {
+                exist = false;
                 CreateDatabaseFile();
             }
-                Connect();
-                CheckCreateTable(LINKNAME, 0);
-                CheckCreateTable(CRAWLEDLINKNAME, 1);                  
+
+            Connect();
+            CheckCreateTable(LINKNAME, 0);
+            CheckCreateTable(CRAWLEDLINKNAME, 1);
+
+            return exist;
         }
 
         /// <summary>
@@ -362,7 +368,6 @@ namespace Core
         {
             Stack<CrawledLink> crawled = new Stack<CrawledLink>();
             foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateNotCrawledLinkReadQuery(CRAWLEDLINKNAME))))
-
             {
                 crawled.Push(link);
             }

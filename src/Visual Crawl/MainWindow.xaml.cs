@@ -28,12 +28,13 @@ namespace Visual_Crawl
             InitializeComponent();
             Links = new List<Link>();
             _multi = new MultiDimentionalList();
+
+            Storage.Enable();
         }
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
             Links = Storage.GetLinks();
-            Links[0].To = "http://www.insidegamer.nl/";
 
             VisualLink visual = new VisualLink(Links[0], null, GetNumberOfChilderen(Links[0].To));
             AddLinks(visual, TopStart, LeftStart);

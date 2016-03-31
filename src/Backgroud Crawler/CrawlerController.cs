@@ -24,11 +24,19 @@ namespace Backgroud_Crawler
             };
         }
 
-        private static void StartUp()
+        private void StartUp()
         {
-            const string url = "http://www.insidegamer.nl";
-            Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
-            Storage.WriteLinks(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+            bool exists = Storage.Enable();
+
+            if (!exists)
+            {
+                const string url = "http://www.insidegamer.nl";
+                Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
+                Storage.WriteLinks(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+            }
+
+            _crawler = new WebCrawler();
+            StartCrawling(_crawler);
         }
 
         public float GetCurrentCpuUsage()
@@ -38,13 +46,7 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
-            Storage.Enable();
-
             StartUp();
-
-            _crawler = new WebCrawler();
-            StartCrawling(_crawler);
-
             bool isWaiting = false;
 
             while (!_stop)

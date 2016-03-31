@@ -38,6 +38,8 @@ namespace Backgroud_Crawler
 
         public void Start()
         {
+            Storage.Enable();
+
             StartUp();
 
             _crawler = new WebCrawler();
@@ -78,6 +80,7 @@ namespace Backgroud_Crawler
         {
             _stop = true;
             _crawler.Stop = true;
+            Storage.Disconnect();
         }
     }
 }

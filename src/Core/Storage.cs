@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using Core.Objects;
 
 namespace Core
@@ -16,21 +14,21 @@ namespace Core
     /// </summary>
     public static class Storage
     {
-        // Fields
-        private static SQLiteConnection _dbConnection;              //Connection to database
-        private  const string DB_FILE = "VisualWebCrawler.sqlite";  //Filename for database
-        private  const string LINKNAME = "Link";                    //Value for Link tablename
-        private  const string CRAWLEDLINKNAME = "CrawledLink";      //Value for CrawledLink tablename
-        private static string _dbConn;                              //Connection string
-        private static string _filePath;                            //The Database filename with complete path
-        private static bool _connectionState;
+        //Fields
+        private const string DB_FILE = "VisualWebCrawler.sqlite"; //Filename for database
+        private const string LINKNAME = "Link"; //Value for Link tablename
+        private const string CRAWLEDLINKNAME = "CrawledLink"; //Value for CrawledLink tablename
+        private static SQLiteConnection _dbConnection; //Connection to database
+        private static string _dbConn; //Connection string
+        private static string _filePath; //The Database filename with complete path
+        private static bool _connectionState; //Connection is open or closed
 
         /// <summary>
         ///     Constructor
         /// </summary>
         static Storage()
         {
-            Enable();
+            //Enable();
         }
 
         /// <summary>
@@ -39,7 +37,7 @@ namespace Core
         ///     Also creates the needed tables when creating a new database.
         ///     Opens the connection.
         /// </summary>
-        private static void Enable()
+        public static void Enable()
         {
             _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + DB_FILE;
             _dbConn = string.Format("Data Source={0};Version=3;Compress=True;", _filePath);
@@ -53,7 +51,10 @@ namespace Core
                 CheckCreateTable(CRAWLEDLINKNAME, 1);                  
         }
 
-        private static void Connect()
+        /// <summary>
+        /// Connect to database.
+        /// </summary>
+        public static void Connect()
         {
             if (_connectionState == false)
             {
@@ -61,13 +62,12 @@ namespace Core
                 _dbConnection.Open();
                 _connectionState = true;
             }
-
         }
 
         /// <summary>
         ///     Close the database connection.
         /// </summary>
-        private static void Disconnect()
+        public static void Disconnect()
         {
             if (_connectionState)
             {
@@ -91,7 +91,7 @@ namespace Core
         /// <param name="tablename">Name of the table</param>
         /// <param name="type">Tabletype: 0 for Link, 1 for CrawledLink</param>
         /// <returns>Succes/Failure</returns>
-        private static bool CheckCreateTable(string tablename, int type)
+        private static void CheckCreateTable(string tablename, int type)
         {
             string sql = string.Format("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", tablename);
             using (SQLiteCommand command = new SQLiteCommand(sql, _dbConnection))
@@ -109,16 +109,10 @@ namespace Core
                     {
                         sql = string.Format("CREATE TABLE {0} (Link VARCHAR(255), IsCrawled INT);", tablename);
                     }
-                    else
-                    {
-                        return false;
-                    }
-
                     ExecuteQuery(sql);
                 }
             }
 
-            return true;
         }
 
         /// <summary>
@@ -139,11 +133,21 @@ namespace Core
             return ReadCrawledLinks(ExecuteReader(CreateReadQuery(CRAWLEDLINKNAME)));
         }
 
+        /// <summary>
+        /// Convers bool to int
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         private static int ConvertBoolToInt(bool input)
         {
             return input ? 1 : 0;
         }
 
+        /// <summary>
+        /// Converts int to bool
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         private static bool ConvertIntToBool(int input)
         {
             return input == 1;
@@ -181,7 +185,6 @@ namespace Core
             }
             foreach (Link link in links)
             {
-                //if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteLinkQuery(link));
                 }
@@ -204,7 +207,6 @@ namespace Core
             }
             foreach (CrawledLink link in links)
             {
-                //if (!CheckDoubles(link))
                 {
                     ExecuteQuery(CreateWriteCrawledLinkQuery(link));
                 }
@@ -215,31 +217,23 @@ namespace Core
             }
         }
 
+  
+
         /// <summary>
-        /// Check for double Link and CrawledLink entries
+        /// Check for double links
         /// </summary>
-        /// <param name="item">Link/CrawledLink</param>
-        /// <returns>Boolean True/False</returns>
-        private static bool CheckDoubles(object item)
-        {
-            if (item.GetType() == typeof(Link))
-            {
-                return CheckLinksDouble((Link)item);
-            }
-
-            if (item.GetType() == typeof(CrawledLink))
-            {
-                return CheckCrawledLinksDouble(((CrawledLink)item).Link);
-            }
-
-            return false;
-        }
-
+        /// <param name="item"></param>
+        /// <returns></returns>
         public static bool CheckLinksDouble(Link item)
         {
             return GetLinks().Any(link => link.From == item.From && link.Host == item.Host && link.To == item.To);
         }
 
+        /// <summary>
+        /// Check for double crawled links
+        /// </summary>
+        /// <param name="itemLink"></param>
+        /// <returns></returns>
         public static bool CheckCrawledLinksDouble(string itemLink)
         {
             return GetCrawledLinks().Any(link => link.Link == itemLink);
@@ -264,9 +258,15 @@ namespace Core
         /// <returns>SQL query string</returns>
         private static string CreateWriteCrawledLinkQuery(CrawledLink link)
         {
-            return string.Format("insert into {0} (Link, IsCrawled) values ('{1}', {2})", CRAWLEDLINKNAME, link.Link, ConvertBoolToInt(link.IsCrawled));
+            return string.Format("insert into {0} (Link, IsCrawled) values ('{1}', {2})", CRAWLEDLINKNAME, link.Link,
+                ConvertBoolToInt(link.IsCrawled));
         }
 
+        /// <summary>
+        /// Create query for updating crawled links boolean
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
         private static string CreateUpdateCrawledLinkQuery(string link)
         {
             return string.Format("update {0} set IsCrawled=1 where Link='{1}'", CRAWLEDLINKNAME, link);
@@ -316,23 +316,24 @@ namespace Core
             return list;
         }
 
+        /// <summary>
+        /// Update the crawled links to crawled=true
+        /// </summary>
+        /// <param name="links"></param>
         public static void UpdateCrawledLinks(List<string> links)
         {
             using (SQLiteCommand command = new SQLiteCommand("begin", _dbConnection))
             {
                 command.ExecuteNonQuery();
             }
-
             foreach (string link in links)
             {
                 ExecuteQuery(CreateUpdateCrawledLinkQuery(link));
             }
-
             using (SQLiteCommand command = new SQLiteCommand("end", _dbConnection))
             {
                 command.ExecuteNonQuery();
             }
-            
         }
 
         /// <summary>
@@ -346,33 +347,25 @@ namespace Core
 
             while (reader.Read())
             {
-                CrawledLink link = new CrawledLink(reader["Link"].ToString(), ConvertIntToBool((int)reader["IsCrawled"]));
+                CrawledLink link = new CrawledLink(reader["Link"].ToString(),
+                    ConvertIntToBool((int) reader["IsCrawled"]));
                 stack.Add(link);
             }
             return stack;
         }
 
+        /// <summary>
+        /// Returns links that are not crawled
+        /// </summary>
+        /// <returns></returns>
         public static Stack<CrawledLink> ReadNotCrawledLinks()
         {
             Stack<CrawledLink> crawled = new Stack<CrawledLink>();
-
-            //int count = 0;
-
             foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateNotCrawledLinkReadQuery(CRAWLEDLINKNAME))))
+
             {
                 crawled.Push(link);
-                //if (!link.IsCrawled)
-                //{
-                //    crawled.Push(link);
-                //    count++;
-                //}
-
-                //if (count >= 100)
-                //{
-                //    break;
-                //}
             }
-
             return crawled;
         }
     }

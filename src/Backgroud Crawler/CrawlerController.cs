@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Backgroud_Crawler.Crawling;
@@ -9,10 +10,11 @@ namespace Backgroud_Crawler
 {
     public class CrawlerController
     {
+        private static Timer _timer;
+
         private readonly PerformanceCounter _cpuCounter;
         private WebCrawler _crawler;
-
-        private bool _stop;
+        private bool _isWaiting;
 
         public CrawlerController()
         {
@@ -22,6 +24,29 @@ namespace Backgroud_Crawler
                 CounterName = "% Processor Time",
                 InstanceName = "_Total"
             };
+        }
+
+        private void TimerCallback(object state)
+        {
+            float cpu = GetCurrentCpuUsage();
+
+            if (!_isWaiting && cpu > 60)
+            {
+                _isWaiting = true;
+
+                Console.WriteLine("\nStopped Crawling\n");
+
+                _crawler.Stop = true;
+            }
+            else if (_isWaiting && cpu < 20)
+            {
+                _isWaiting = false;
+
+                Console.WriteLine("\nStarted Crawling again\n");
+
+                _crawler.Stop = false;
+                StartCrawling(_crawler);
+            }
         }
 
         private void StartUp()
@@ -41,35 +66,20 @@ namespace Backgroud_Crawler
 
         public float GetCurrentCpuUsage()
         {
-            return _cpuCounter.NextValue();
+            dynamic firstValue = _cpuCounter.NextValue();
+
+            Thread.Sleep(1000);
+
+            dynamic secondValue = _cpuCounter.NextValue();
+
+            return secondValue;
         }
 
         public void Start()
         {
             StartUp();
-            bool isWaiting = false;
 
-            while (!_stop)
-            {
-                float cpu = GetCurrentCpuUsage();
-
-                if (cpu > 60)
-                {
-                    isWaiting = true;
-                    _crawler.Stop = true;
-                }
-                else if (isWaiting && cpu < 20)
-                {
-                    isWaiting = false;
-                    _crawler.Stop = false;
-
-                    StartCrawling(_crawler);
-                }
-                else
-                {
-                    Thread.Sleep(1000);
-                }
-            }
+            _timer = new Timer(TimerCallback, null, 0, 2000);
         }
 
         private static void StartCrawling(WebCrawler webCrawler)
@@ -80,8 +90,10 @@ namespace Backgroud_Crawler
 
         public void Stop()
         {
-            _stop = true;
+            _timer.Dispose();
             _crawler.Stop = true;
+
+            ToDbStorage.Write();
             Storage.Disconnect();
         }
     }

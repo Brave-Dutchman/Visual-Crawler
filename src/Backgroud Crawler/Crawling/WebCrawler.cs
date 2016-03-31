@@ -12,18 +12,7 @@ namespace Backgroud_Crawler.Crawling
             while (!Stop)
             {
                 CrawledLink craweledLink = CrawlingStorage.GetCrawledLink();
-
-                if (craweledLink != null)
-                {
-                    Crawler(craweledLink.Link);
-                }
-                else
-                {
-                    Console.WriteLine("\n{0}", "Saving the old links");
-                    ToDbStorage.Write();
-                    Console.WriteLine("{0}\n", "Getting new links");
-                    CrawlingStorage.GetNewLinks();
-                }
+                Crawler(craweledLink.Link);
             }
         }
 
@@ -45,7 +34,7 @@ namespace Backgroud_Crawler.Crawling
                                 url = url.Substring(0, url.Length - 1);
                             }
 
-                            Console.WriteLine("Crawled: {0}", url); //Reads it to the end
+                            Console.WriteLine("Crawled:  {0}", url); //Reads it to the end
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(url, sreader.ReadToEnd(), myWebResponse));

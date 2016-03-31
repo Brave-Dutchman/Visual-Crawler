@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core;
 using Core.Objects;
 
@@ -25,7 +26,13 @@ namespace Backgroud_Crawler.Crawling
         {
             lock (_linksToCrawl)
             {
-                if (_linksToCrawl.Count <= 0) return null;
+                if (_linksToCrawl.Count <= 0)
+                {
+                    Console.WriteLine("\n{0}", "Saving the old links");
+                    ToDbStorage.Write();
+                    Console.WriteLine("{0}\n", "Getting new links");
+                    GetNewLinks();
+                }
 
                 return _linksToCrawl.Pop();
             }

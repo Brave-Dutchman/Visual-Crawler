@@ -353,8 +353,7 @@ namespace Core
 
             while (reader.Read())
             {
-                CrawledLink link = new CrawledLink(reader["Link"].ToString(),
-                    ConvertIntToBool((int) reader["IsCrawled"]));
+                CrawledLink link = new CrawledLink(reader["Link"].ToString(), ConvertIntToBool((int) reader["IsCrawled"]));
                 stack.Add(link);
             }
             return stack;

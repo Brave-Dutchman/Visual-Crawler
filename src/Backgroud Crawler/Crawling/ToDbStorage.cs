@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Core;
 using Core.Objects;
 
@@ -12,9 +14,9 @@ namespace Backgroud_Crawler.Crawling
 
         static ToDbStorage()
         {
+            UPDATED = new List<string>();
             CRAWLED_LINKS = new List<CrawledLink>();
             LINKS = new List<Link>();
-            UPDATED = new List<string>();
         }
 
         public static void Write()
@@ -27,20 +29,22 @@ namespace Backgroud_Crawler.Crawling
 
             lock (CRAWLED_LINKS)
             {
-                Storage.WriteLinks(LINKS);
-                LINKS.Clear();
+                Storage.WriteLinks(CRAWLED_LINKS);
+                CRAWLED_LINKS.Clear();
             }
 
             lock (LINKS)
             {
-                Storage.WriteLinks(CRAWLED_LINKS);
-                CRAWLED_LINKS.Clear();
+                Storage.WriteLinks(LINKS);
+                LINKS.Clear();
             }
+
+            Thread.Sleep(1000);
         }
 
         public static void Add(List<CrawledLink> crawledLinks, string updated)
         {
-            lock (updated)
+            lock (UPDATED)
             {
                 UPDATED.Add(updated);
             }
@@ -49,7 +53,8 @@ namespace Backgroud_Crawler.Crawling
             {
                 foreach (CrawledLink crawledLink in crawledLinks)
                 {
-                    if (!CRAWLED_LINKS.ContainsCrawled(crawledLink.Link))
+                    if (!CRAWLED_LINKS.ContainsCrawled(crawledLink.Link) &&
+                        !Storage.CheckCrawledLinksDouble(crawledLink.Link))
                     {
                         CRAWLED_LINKS.Add(crawledLink);
                     }
@@ -59,12 +64,9 @@ namespace Backgroud_Crawler.Crawling
 
         public static void Add(List<Link> links)
         {
-            lock (CRAWLED_LINKS)
+            lock (LINKS)
             {
-                foreach (Link link in links)
-                {
-                    LINKS.Add(link);
-                }
+                LINKS.AddRange(links);
             }
         }
     }

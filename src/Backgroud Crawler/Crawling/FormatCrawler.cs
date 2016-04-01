@@ -47,7 +47,7 @@ namespace Backgroud_Crawler.Crawling
 
                 if (_crawledContent.Header == url || url.Contains("?") || url.Contains("#") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
-                if (!Storage.CheckCrawledLinksDouble(url))
+                if (!_crawled.ContainsCrawled(url))
                 {
                     _crawled.Add(new CrawledLink(url));
                 }

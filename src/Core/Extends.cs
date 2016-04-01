@@ -6,9 +6,9 @@ namespace Core
 {
     public static class Extends
     {
-        public static bool ContainsCrawled(this List<CrawledLink> crawled, string contains)
+        public static bool ContainsCrawled(this List<CrawledLink> crawledList, string contains)
         {
-            return crawled.Any(link => link.Link == contains);
+            return crawledList.Any(crawled => crawled.Link == contains);
         }
 
         public static bool ContainsLink(this List<Link> links, string from, string to)

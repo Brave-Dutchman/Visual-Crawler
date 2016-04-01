@@ -56,8 +56,8 @@ namespace Backgroud_Crawler
             if (!exists)
             {
                 const string url = "http://www.insidegamer.nl";
-                Storage.WriteLinks(new List<CrawledLink> { new CrawledLink(url) });
-                Storage.WriteLinks(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+                new WebCrawler().Crawler(url);
+                Thread.Sleep(1000);
             }
 
             _crawler = new WebCrawler();

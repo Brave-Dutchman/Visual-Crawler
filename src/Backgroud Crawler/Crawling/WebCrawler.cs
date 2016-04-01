@@ -24,7 +24,7 @@ namespace Backgroud_Crawler.Crawling
             }
         }
 
-        private void Crawler(string webUrl)
+        public void Crawler(string webUrl)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Backgroud_Crawler.Crawling
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(url, sreader.ReadToEnd(), myWebResponse));
- 
+
                             ThreadPool.QueueUserWorkItem(crawler.Format);
                         }
                     }

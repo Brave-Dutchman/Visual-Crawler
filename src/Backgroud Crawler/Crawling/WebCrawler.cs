@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
@@ -15,7 +16,7 @@ namespace Backgroud_Crawler.Crawling
 
                 if (craweledLink == null)
                 {
-                    Console.WriteLine("Return null the web is crawled");
+                    Console.WriteLine("The web is crawled");
                     break;
                 }
 
@@ -34,7 +35,6 @@ namespace Backgroud_Crawler.Crawling
                     {
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
-
                             string url = myWebResponse.ResponseUri.ToString();
                             if (url.EndsWith("/"))
                             {
@@ -45,7 +45,8 @@ namespace Backgroud_Crawler.Crawling
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(url, sreader.ReadToEnd(), myWebResponse));
-                            crawler.Format();
+ 
+                            ThreadPool.QueueUserWorkItem(crawler.Format);
                         }
                     }
                 }

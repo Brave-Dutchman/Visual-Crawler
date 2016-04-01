@@ -21,19 +21,20 @@ namespace Backgroud_Crawler.Crawling
         {
             lock (UPDATED)
             {
-                lock (CRAWLED_LINKS)
-                {
-                    lock (LINKS)
-                    {
-                        Storage.UpdateCrawledLinks(UPDATED);
-                        Storage.WriteLinks(LINKS);
-                        Storage.WriteLinks(CRAWLED_LINKS);
+                Storage.UpdateCrawledLinks(UPDATED);
+                UPDATED.Clear();
+            }
 
-                        CRAWLED_LINKS.Clear();
-                        LINKS.Clear();
-                        UPDATED.Clear();
-                    }
-                }
+            lock (CRAWLED_LINKS)
+            {
+                Storage.WriteLinks(LINKS);
+                LINKS.Clear();
+            }
+
+            lock (LINKS)
+            {
+                Storage.WriteLinks(CRAWLED_LINKS);
+                CRAWLED_LINKS.Clear();
             }
         }
 

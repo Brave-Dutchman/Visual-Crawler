@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Core;
 using Core.Objects;
 
@@ -25,7 +26,7 @@ namespace Backgroud_Crawler.Crawling
             _crawledContent = crawledContent;
         }
 
-        public void Format()
+        public void Format(object b)
         {
             Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
             MatchCollection matches = regexLink.Matches(_crawledContent.Content);

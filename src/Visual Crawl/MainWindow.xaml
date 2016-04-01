@@ -8,7 +8,7 @@
 
     <Grid>
 
-        <Grid x:Name="GrdSelect">
+        <Grid x:Name="GrdSelect" Visibility="Visible">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBox Width="200" Text="{Binding Text, ElementName=ThisWindow}"/>
                 <Button Width="80" Content="Visualize" Click="Button_Click"/>
@@ -21,11 +21,17 @@
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Content="Kies nieuwe root" Click="Button_Click_1"/>
 
-            <local:DispalyValue x:Name="StaticDisplay" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="100"/>
-            <local:DispalyValue x:Name="Display" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="100"/>
+            <local:DispalyValue x:Name="StaticDisplay" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="100"/>
+            <local:DispalyValue x:Name="Display"       Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="100"/>
 
-            <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Loaded="FrameworkElement_OnLoaded">
+            <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Loaded="FrameworkElement_OnLoaded">
                 <Canvas x:Name="Field" Width="2000" Height="2000" HorizontalAlignment="Left"/>
             </ScrollViewer>
         </Grid>

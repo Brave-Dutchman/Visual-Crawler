@@ -56,6 +56,18 @@ namespace Visual_Crawl
             AddLinks(visual, TopStart, LeftStart);
         }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+            GrdSelect.Visibility = Visibility.Visible;
+            GrdContent.Visibility = Visibility.Hidden;
+        }
+
+        private void ClearCanvas()
+        {
+            Field.Children.Clear();
+        }
+
         private void CreateLinks()
         {
             Links.AddRange(Storage.GetLinks());

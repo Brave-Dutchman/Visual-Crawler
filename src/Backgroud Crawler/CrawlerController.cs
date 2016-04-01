@@ -56,7 +56,11 @@ namespace Backgroud_Crawler
             if (!exists)
             {
                 const string url = "http://www.insidegamer.nl";
+                ToDbStorage.Add(new List<CrawledLink> { new CrawledLink(url) }, url);
+                ToDbStorage.Add(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+
                 new WebCrawler().Crawler(url);
+
                 Thread.Sleep(1000);
             }
 

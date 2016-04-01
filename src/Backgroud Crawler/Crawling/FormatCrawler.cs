@@ -34,7 +34,13 @@ namespace Backgroud_Crawler.Crawling
             foreach (object match in matches)
             {
                 string url = match.ToString();
-                if (url.StartsWith("#") || Path.HasExtension(url) || url.Equals("/")) continue;
+
+                if(url.Equals("/")) continue;
+                else if (_crawledContent.Header == url) continue;
+                else if (url.Contains("?")) continue;
+                else if (url.Contains("#")) continue;
+                else if (url.Contains(";")) continue;
+                else if (url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
                 if (url.StartsWith("//"))
                 {
@@ -45,7 +51,10 @@ namespace Backgroud_Crawler.Crawling
                     url = _crawledContent.Header + url;
                 }
 
-                if (_crawledContent.Header == url || url.Contains("?") || url.Contains("#") || url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
+                if (url.EndsWith("/"))
+                {
+                    url = url.Substring(0, url.Length - 1);
+                }
 
                 if (!_crawled.ContainsCrawled(url))
                 {

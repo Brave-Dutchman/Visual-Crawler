@@ -118,7 +118,6 @@ namespace Core
                     ExecuteQuery(sql);
                 }
             }
-
         }
 
         /// <summary>
@@ -264,8 +263,7 @@ namespace Core
         /// <returns>SQL query string</returns>
         private static string CreateWriteCrawledLinkQuery(CrawledLink link)
         {
-            return string.Format("insert into {0} (Link, IsCrawled) values ('{1}', {2})", CRAWLEDLINKNAME, link.Link,
-                ConvertBoolToInt(link.IsCrawled));
+            return string.Format("insert into {0} (Link, IsCrawled) values ('{1}', {2})", CRAWLEDLINKNAME, link.Link, ConvertBoolToInt(link.IsCrawled));
         }
 
         /// <summary>
@@ -366,10 +364,14 @@ namespace Core
         public static Stack<CrawledLink> ReadNotCrawledLinks()
         {
             Stack<CrawledLink> crawled = new Stack<CrawledLink>();
-            foreach (CrawledLink link in ReadCrawledLinks(ExecuteReader(CreateNotCrawledLinkReadQuery(CRAWLEDLINKNAME))))
+
+            List<CrawledLink> list = ReadCrawledLinks(ExecuteReader(CreateNotCrawledLinkReadQuery(CRAWLEDLINKNAME)));
+
+            foreach (CrawledLink link in list)
             {
                 crawled.Push(link);
             }
+
             return crawled;
         }
     }

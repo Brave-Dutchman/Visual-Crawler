@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Core;
 using Core.Objects;
@@ -21,25 +21,30 @@ namespace Backgroud_Crawler.Crawling
 
         public static void Write()
         {
-            lock (UPDATED)
-            {
-                Storage.UpdateCrawledLinks(UPDATED);
-                UPDATED.Clear();
-            }
+            Thread.Sleep(2000);
+
+            Console.WriteLine("\n{0}", "Saving the old links");
 
             lock (CRAWLED_LINKS)
             {
                 Storage.WriteLinks(CRAWLED_LINKS);
                 CRAWLED_LINKS.Clear();
+                Console.WriteLine("{0}", "Saved the new uncrawled links");
+            }
+
+            lock (UPDATED)
+            {
+                Storage.UpdateCrawledLinks(UPDATED);
+                UPDATED.Clear();
+                Console.WriteLine("{0}", "Saved the updated crawled links");
             }
 
             lock (LINKS)
             {
                 Storage.WriteLinks(LINKS);
                 LINKS.Clear();
+                Console.WriteLine("{0}", "Saved the found links");
             }
-
-            Thread.Sleep(1000);
         }
 
         public static void Add(List<CrawledLink> crawledLinks, string updated)

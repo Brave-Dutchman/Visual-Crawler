@@ -11,13 +11,14 @@ namespace Backgroud_Crawler.Crawling
 
         static CrawlingStorage()
         {
-            _linksToCrawl = Storage.ReadNotCrawledLinks();
+            _linksToCrawl = new Stack<CrawledLink>();
         }
 
         public static void GetNewLinks()
         {
             lock (_linksToCrawl)
             {
+                Console.WriteLine("{0}\n", "Getting new links");
                 _linksToCrawl = Storage.ReadNotCrawledLinks();
             }
         }
@@ -28,9 +29,7 @@ namespace Backgroud_Crawler.Crawling
             {
                 if (_linksToCrawl.Count <= 0)
                 {
-                    Console.WriteLine("\n{0}", "Saving the old links");
                     ToDbStorage.Write();
-                    Console.WriteLine("{0}\n", "Getting new links");
                     GetNewLinks();
                 }
 

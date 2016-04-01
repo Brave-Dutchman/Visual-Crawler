@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core;
@@ -12,6 +13,8 @@ namespace Visual_Crawl
     /// </summary>
     public partial class MainWindow
     {
+        public string Text { get; set; }
+
         public const double TopStart = 120;
         public const double DefaultTopMargin = 70;
 
@@ -21,7 +24,6 @@ namespace Visual_Crawl
         public List<Link> Links { get; set; }
 
         private readonly MultiDimentionalList _multi;
-
 
         public MainWindow()
         {
@@ -34,10 +36,29 @@ namespace Visual_Crawl
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            Links = Storage.GetLinks();
+            Task.Run(new Action(CreateLinks));
+        }
 
-            VisualLink visual = new VisualLink(Links[0], null, GetNumberOfChilderen(Links[0].To));
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Link link = FindStarter(Text);
+
+            if (link == null)
+            {
+                MessageBox.Show("Link is niet gevonden");
+                return;
+            }
+
+            GrdSelect.Visibility = Visibility.Hidden;
+            GrdContent.Visibility = Visibility.Visible;
+
+            VisualLink visual = new VisualLink(link, null, GetNumberOfChilderen(link.To));
             AddLinks(visual, TopStart, LeftStart);
+        }
+
+        private void CreateLinks()
+        {
+            Links.AddRange(Storage.GetLinks());
         }
 
         private void VisualOnMouseLeftButtonDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
@@ -133,6 +154,11 @@ namespace Visual_Crawl
         private Link[] GetLinksFrom(string link)
         {
             return Links.FindAll(x => x.From == link && x.To != link).ToArray();
+        }
+
+        private Link FindStarter(string link)
+        {
+            return Links.Find(x => x.To == link);
         }
 
         private int GetNumberOfChilderen(string link)

@@ -41,7 +41,7 @@ namespace Backgroud_Crawler.Crawling
                                 url = url.Substring(0, url.Length - 1);
                             }
 
-                            Console.WriteLine("Crawled:  {0}", url); //Reads it to the end
+                            //Console.WriteLine("Crawled:  {0}", url); //Reads it to the end
 
                             FormatCrawler crawler = new FormatCrawler();
                             crawler.Set(new CrawledContent(url, sreader.ReadToEnd(), myWebResponse));

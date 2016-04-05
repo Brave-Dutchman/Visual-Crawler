@@ -4,13 +4,13 @@ namespace Core.Objects
 {
     public class CrawledContent
     {
-        public CrawledContent(string url, string content, WebResponse webResponce)
+        public CrawledContent(string url, string content, string host, string scheme)
         {
             Url = url;
             Content = content;
 
-            Host = webResponce.ResponseUri.Host;
-            Scheme = webResponce.ResponseUri.Scheme;
+            Host = host;
+            Scheme = scheme;
         }
 
         public string Url { get; private set; }

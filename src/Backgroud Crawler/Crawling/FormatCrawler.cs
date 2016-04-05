@@ -11,20 +11,16 @@ namespace Backgroud_Crawler.Crawling
         private readonly List<CrawledLink> _crawled;
         private readonly List<Link> _links;
 
-        private CrawledContent _crawledContent;
+        private readonly CrawledContent _crawledContent;
 
-        public FormatCrawler()
+        public FormatCrawler(CrawledContent crawledContent)
         {
             _crawled = new List<CrawledLink>();
+            _crawledContent = crawledContent;
             _links = new List<Link>();
         }
 
-        public void Set(CrawledContent crawledContent)
-        {
-            _crawledContent = crawledContent;
-        }
-
-        public void Format(object b)
+        public void Format()
         {
             Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
             MatchCollection matches = regexLink.Matches(_crawledContent.Content);

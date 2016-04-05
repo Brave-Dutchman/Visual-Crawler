@@ -6,13 +6,13 @@ using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
 {
-    public static class ToDbStorage
+    public static class ToStorage
     {
         private static readonly List<Link> LINKS;
         private static readonly List<CrawledLink> CRAWLED_LINKS;
         private static readonly List<string> UPDATED;
 
-        static ToDbStorage()
+        static ToStorage()
         {
             UPDATED = new List<string>();
             CRAWLED_LINKS = new List<CrawledLink>();

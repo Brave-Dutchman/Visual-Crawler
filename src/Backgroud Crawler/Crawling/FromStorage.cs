@@ -5,11 +5,11 @@ using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
 {
-    public static class CrawlingStorage
+    public static class FromStorage
     {
         private static Stack<CrawledLink> _linksToCrawl;
 
-        static CrawlingStorage()
+        static FromStorage()
         {
             _linksToCrawl = new Stack<CrawledLink>();
         }
@@ -29,7 +29,7 @@ namespace Backgroud_Crawler.Crawling
             {
                 if (_linksToCrawl.Count <= 0)
                 {
-                    ToDbStorage.Write();
+                    ToStorage.Write();
                     GetNewLinks();
                 }
 

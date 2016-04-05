@@ -56,8 +56,8 @@ namespace Backgroud_Crawler
             if (!exists)
             {
                 const string url = "http://www.insidegamer.nl";
-                ToDbStorage.Add(new List<CrawledLink> { new CrawledLink(url) }, url);
-                ToDbStorage.Add(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+                ToStorage.Add(new List<CrawledLink> { new CrawledLink(url) }, url);
+                ToStorage.Add(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
 
                 new WebCrawler().Crawler(url);
 
@@ -97,7 +97,7 @@ namespace Backgroud_Crawler
             _timer.Dispose();
             _crawler.Stop = true;
 
-            ToDbStorage.Write();
+            ToStorage.Write();
             Storage.Disconnect();
         }
     }

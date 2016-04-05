@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Core;
 using Core.Objects;
 
 namespace Backgroud_Crawler.Crawling
 {
-    public class FormatCrawler : Threaded
+    public class FormatCrawler
     {
         private readonly List<CrawledLink> _crawled;
         private readonly List<Link> _links;
@@ -71,8 +69,8 @@ namespace Backgroud_Crawler.Crawling
                 }
             }
 
-            ToDbStorage.Add(_crawled, _crawledContent.Url);
-            ToDbStorage.Add(_links);
+            ToStorage.Add(_crawled, _crawledContent.Url);
+            ToStorage.Add(_links);
 
             Console.WriteLine("Formated: {0}", _crawledContent.Url);
         }

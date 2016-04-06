@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core.Data;
 
-namespace Core
+namespace Core.Data
 {
     public static class Extends
     {

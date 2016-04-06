@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Data;
 using Core.Database;
 
@@ -16,11 +15,11 @@ namespace Visual_Crawl
     {
         public string Text { get; set; }
 
-        public const double TopStart = 120;
-        public const double DefaultTopMargin = 70;
+        public const double TOP_START = 120;
+        public const double DEFAULT_TOP_MARGIN = 70;
 
-        public const double LeftStart = 70;
-        public const double DefaultLeftMargin = 70;
+        public const double LEFT_START = 70;
+        public const double DEFAULT_LEFT_MARGIN = 70;
 
         public List<Link> Links { get; set; }
 
@@ -42,7 +41,7 @@ namespace Visual_Crawl
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Link link = FindStarter(Text);
+            Link link = FindStarter(FormatText());
 
             if (link == null)
             {
@@ -54,7 +53,19 @@ namespace Visual_Crawl
             GrdContent.Visibility = Visibility.Visible;
 
             VisualLink visual = new VisualLink(link, null, GetNumberOfChilderen(link.To));
-            AddLinks(visual, TopStart, LeftStart);
+            AddLinks(visual, TOP_START, LEFT_START);
+        }
+
+        private string FormatText()
+        {
+            string text = Text;
+
+            if (text.EndsWith("/"))
+            {
+                text = text.Substring(0, Text.Length - 1);
+            }
+
+            return text;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -143,11 +154,11 @@ namespace Visual_Crawl
             foreach (Link connectedLink in GetLinksFrom(visual.Link.To))
             {
                 VisualLink temp = new VisualLink(connectedLink, visual, GetNumberOfChilderen(connectedLink.To));
-                AddLinks(temp, DefaultTopMargin + visual.Top, visual.Left + count * DefaultLeftMargin);
+                AddLinks(temp, DEFAULT_TOP_MARGIN + visual.Top, visual.Left + count * DEFAULT_LEFT_MARGIN);
                 count++;
             }
 
-            Field.Width = count * DefaultLeftMargin + LeftStart + DefaultLeftMargin;
+            Field.Width = count * DEFAULT_LEFT_MARGIN + LEFT_START + DEFAULT_LEFT_MARGIN;
             visual.DisplayedLink = DisplayedLink.FullVisable;
         }
 

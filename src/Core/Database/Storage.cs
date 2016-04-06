@@ -140,9 +140,10 @@ namespace Core.Database
 
         /// <summary>
         /// Convers bool to int
+        /// (SQLite does not support boolean values)
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">Boolean value</param>
+        /// <returns>Integer value</returns>
         private static int ConvertBoolToInt(bool input)
         {
             return input ? 1 : 0;
@@ -150,9 +151,10 @@ namespace Core.Database
 
         /// <summary>
         /// Converts int to bool
+        /// (SQLite does not support boolean values)
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">Integer value</param>
+        /// <returns>Boolean value</returns>
         private static bool ConvertIntToBool(int input)
         {
             return input == 1;
@@ -227,8 +229,8 @@ namespace Core.Database
         /// <summary>
         /// Check for double links
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <param name="item">Link object</param>
+        /// <returns>Is double (true/false)</returns>
         public static bool CheckLinksDouble(Link item)
         {
             return GetLinks().Any(link => link.From == item.From && link.Host == item.Host && link.To == item.To);
@@ -237,8 +239,8 @@ namespace Core.Database
         /// <summary>
         /// Check for double crawled links
         /// </summary>
-        /// <param name="itemLink"></param>
-        /// <returns></returns>
+        /// <param name="itemLink">String linkname</param>
+        /// <returns>Is double (true/false)</returns>
         public static bool CheckCrawledLinksDouble(string itemLink)
         {
             return GetCrawledLinks().Any(link => link.Link == itemLink);
@@ -269,8 +271,8 @@ namespace Core.Database
         /// <summary>
         /// Create query for updating crawled links boolean
         /// </summary>
-        /// <param name="link"></param>
-        /// <returns></returns>
+        /// <param name="link">String link value</param>
+        /// <returns>SQL query string</returns>
         private static string CreateUpdateCrawledLinkQuery(string link)
         {
             return string.Format("update {0} set IsCrawled=1 where Link='{1}'", CRAWLEDLINKNAME, link);
@@ -323,7 +325,7 @@ namespace Core.Database
         /// <summary>
         /// Update the crawled links to crawled=true
         /// </summary>
-        /// <param name="links"></param>
+        /// <param name="links">List of strings</param>
         public static void UpdateCrawledLinks(List<string> links)
         {
             using (SQLiteCommand command = new SQLiteCommand("begin", _dbConnection))
@@ -360,7 +362,7 @@ namespace Core.Database
         /// <summary>
         /// Returns links that are not crawled
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Stack of CrawledLinks</returns>
         public static Stack<CrawledLink> ReadNotCrawledLinks()
         {
             Stack<CrawledLink> crawled = new Stack<CrawledLink>();

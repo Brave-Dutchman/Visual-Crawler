@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Threading;
 using Backgroud_Crawler.Crawling;
 using Backgroud_Crawler._Storage;
-using Core;
 using Core.Data;
 using Core.Database;
 

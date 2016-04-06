@@ -132,7 +132,7 @@ namespace Visual_Crawl
         {
             if (visual.Parent != null)
             {
-                int index = _multi.FindParent(visual.Parent);
+                int index = _multi.FindParentList(visual.Parent);
                 int total = _multi.Count -1;
 
                 for (int i = total; i > index; i--)

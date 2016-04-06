@@ -40,7 +40,7 @@ namespace Backgroud_Crawler.Crawling
                 else if (url.Contains(";")) continue;
                 else if (url.LastIndexOf(":", StringComparison.Ordinal) > 6) continue;
 
-                //Creates a correct link
+                // Creates a correct link
                 if (url.StartsWith("//"))
                 {
                     url = _crawledContent.Scheme + ":" + url;
@@ -50,7 +50,7 @@ namespace Backgroud_Crawler.Crawling
                     url = _crawledContent.Header + url;
                 }
 
-                //removes the final slash from a link
+                // Removes the final slash from a link
                 if (url.EndsWith("/"))
                 {
                     url = url.Substring(0, url.Length - 1);
@@ -61,15 +61,15 @@ namespace Backgroud_Crawler.Crawling
                     _crawled.Add(new CrawledLink(url));
                 }
 
-                //Checks if the page already contained this link
+                // Checks if the page already contained this link
                 if (_links.ContainsLink(_crawledContent.Url, url))
                 {
-                    //Yes, find that link and increase the TimesOnPage
+                    // Yes, find that link and increase the TimesOnPage
                     _links.FindLink(_crawledContent.Url, url).TimesOnPage++;
                 }
                 else
                 {
-                    //No, add a new link to the page
+                    // No, add a new link to the page
                     _links.Add(new Link(_crawledContent.Host, _crawledContent.Url, url));
                 }
             }

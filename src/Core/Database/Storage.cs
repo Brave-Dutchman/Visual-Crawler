@@ -83,7 +83,7 @@ namespace Core.Database
         }
 
         /// <summary>
-        ///     Method to create the database file.
+        /// Method to create the database file.
         /// </summary>
         private static void CreateDatabaseFile()
         {
@@ -92,7 +92,7 @@ namespace Core.Database
         }
 
         /// <summary>
-        ///     Check and create the tables.
+        /// Check and create the tables.
         /// </summary>
         /// <param name="tablename">Name of the table</param>
         /// <param name="type">Tabletype: 0 for Link, 1 for CrawledLink</param>

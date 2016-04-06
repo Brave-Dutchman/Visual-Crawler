@@ -2,6 +2,9 @@
 
 namespace Core.Data
 {
+    /// <summary>
+    /// The crawledlink used by the webcrawler to get new links to crawl and ensure that no link is crawled twice
+    /// </summary>
     public class CrawledLink
     {
         public string Link { get; set; }

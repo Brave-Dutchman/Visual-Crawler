@@ -2,6 +2,9 @@
 
 namespace Core.Data
 {
+    /// <summary>
+    /// The usable link for the visual application
+    /// </summary>
     public class Link
     {
         public string Host { get; set; }
@@ -10,10 +13,7 @@ namespace Core.Data
         public int TimesOnPage { get; set; }
 
         [JsonConstructor]
-        public Link()
-        {
-            
-        }
+        public Link() { }
 
         public Link(string host, string @from, string to)
         {

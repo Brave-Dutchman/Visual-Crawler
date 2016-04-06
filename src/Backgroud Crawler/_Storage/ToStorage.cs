@@ -19,12 +19,18 @@ namespace Backgroud_Crawler._Storage
             LINKS = new List<Link>();
         }
 
+        /// <summary>
+        /// Writes everything to the database, and then closes the database connection 
+        /// </summary>
         public static void WriteEnd()
         {
             Write();
             Storage.Disconnect();
         }
 
+        /// <summary>
+        /// Writes all the crawledlinks, updated links and links to the database
+        /// </summary>
         public static void Write()
         {
             Thread.Sleep(2000);
@@ -53,6 +59,11 @@ namespace Backgroud_Crawler._Storage
             }
         }
 
+        /// <summary>
+        /// Add the new links to the CRAWLED_LINKS
+        /// </summary>
+        /// <param name="crawledLinks">A list with all the found links</param>
+        /// <param name="updated">The links that was craled</param>
         public static void Add(List<CrawledLink> crawledLinks, string updated)
         {
             lock (UPDATED)
@@ -73,6 +84,10 @@ namespace Backgroud_Crawler._Storage
             }
         }
 
+        /// <summary>
+        /// Add the new links to the LINKS
+        /// </summary>
+        /// <param name="links">A list with all the found links</param>
         public static void Add(List<Link> links)
         {
             lock (LINKS)

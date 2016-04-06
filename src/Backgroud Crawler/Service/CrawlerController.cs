@@ -27,6 +27,10 @@ namespace Backgroud_Crawler.Service
             };
         }
 
+        /// <summary>
+        /// The callback for the timer thread
+        /// </summary>
+        /// <param name="state"></param>
         private void TimerCallback(object state)
         {
             float cpu = GetCurrentCpuUsage();
@@ -52,6 +56,11 @@ namespace Backgroud_Crawler.Service
             Console.WriteLine("\tChecked Cpu, {0}", DateTime.Now.ToLongTimeString());
         }
 
+        /// <summary>
+        /// Starts the application by setting the database.
+        /// If no database exists creates the first url and runs a crawler on that.
+        /// Start the webrawler on a new thread
+        /// </summary>
         private void StartUp()
         {
             bool exists = Storage.Enable();
@@ -76,6 +85,12 @@ namespace Backgroud_Crawler.Service
             StartCrawling(_crawler);
         }
 
+        /// <summary>
+        /// Gets the current CPU height.
+        /// As per Microsofts advice first call the counter than wait 1000 ms and the call it again
+        /// This way the value will be correct
+        /// </summary>
+        /// <returns>The current cpu height in %</returns>
         public float GetCurrentCpuUsage()
         {
             dynamic firstValue = _cpuCounter.NextValue();
@@ -87,6 +102,9 @@ namespace Backgroud_Crawler.Service
             return secondValue;
         }
 
+        /// <summary>
+        /// The windows service start method
+        /// </summary>
         public void Start()
         {
             StartUp();
@@ -94,12 +112,19 @@ namespace Backgroud_Crawler.Service
             _timer = new Timer(TimerCallback, null, 0, 2000);
         }
 
+        /// <summary>
+        /// Starts a new thread with the webcrawler
+        /// </summary>
+        /// <param name="webCrawler"></param>
         private static void StartCrawling(WebCrawler webCrawler)
         {
             Thread thread = new Thread(webCrawler.Run);
             thread.Start();
         }
 
+        /// <summary>
+        /// The windows service stop methods
+        /// </summary>
         public void Stop()
         {
             _timer.Dispose();

@@ -62,7 +62,7 @@ namespace Backgroud_Crawler.Crawling
 
                 Task.Run(() => 
                 {
-                    new ProcessCrawled(new CrawledContent(url, text, host, scheme)).Format();
+                    new ProcessCrawled(new CrawledContent(url, text, host, scheme)).Process();
                 });
             }
             catch (Exception)

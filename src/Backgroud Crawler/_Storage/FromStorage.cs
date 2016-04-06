@@ -14,6 +14,9 @@ namespace Backgroud_Crawler._Storage
             _linksToCrawl = new Stack<CrawledLink>();
         }
 
+        /// <summary>
+        /// Gets the 
+        /// </summary>
         public static void GetNewLinks()
         {
             lock (_linksToCrawl)
@@ -23,6 +26,11 @@ namespace Backgroud_Crawler._Storage
             }
         }
 
+        /// <summary>
+        /// Gets the next crawled link from the stack,
+        /// if the stack is empty gets new links from the database
+        /// </summary>
+        /// <returns>The next Crawledlink to crawl</returns>
         public static CrawledLink GetCrawledLink()
         {
             lock (_linksToCrawl)

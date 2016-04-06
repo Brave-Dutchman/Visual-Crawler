@@ -20,6 +20,12 @@ namespace Backgroud_Crawler._Storage
             LINKS = new List<Link>();
         }
 
+        public static void WriteEnd()
+        {
+            Write();
+            Storage.Disconnect();
+        }
+
         public static void Write()
         {
             Thread.Sleep(2000);

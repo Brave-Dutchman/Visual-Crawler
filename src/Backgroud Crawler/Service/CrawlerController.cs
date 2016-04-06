@@ -100,8 +100,7 @@ namespace Backgroud_Crawler.Service
             _timer.Dispose();
             _crawler.Stop = true;
 
-            ToStorage.Write();
-            Storage.Disconnect();
+            ToStorage.WriteEnd();
         }
     }
 }

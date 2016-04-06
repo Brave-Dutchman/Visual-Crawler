@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Backgroud_Crawler._Storage;
-using Core;
 using Core.Data;
 
 namespace Backgroud_Crawler.Crawling
 {
-    public class ProcessCrawler
+    public class ProcessCrawled
     {
         private readonly List<CrawledLink> _crawled;
         private readonly List<Link> _links;
 
         private readonly CrawledContent _crawledContent;
 
-        public ProcessCrawler(CrawledContent crawledContent)
+        public ProcessCrawled(CrawledContent crawledContent)
         {
             _crawled = new List<CrawledLink>();
             _crawledContent = crawledContent;

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Core;
-using Core.Objects;
+using Core.Data;
 using Visual_Crawl.Annotations;
 
 namespace Visual_Crawl

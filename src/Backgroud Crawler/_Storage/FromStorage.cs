@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
-using Core.Objects;
+using Core.Data;
+using Core.Database;
 
-namespace Backgroud_Crawler.Crawling
+namespace Backgroud_Crawler._Storage
 {
     public static class FromStorage
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
-using Core.Objects;
+using Core.Data;
 
 namespace Visual_Crawl
 {

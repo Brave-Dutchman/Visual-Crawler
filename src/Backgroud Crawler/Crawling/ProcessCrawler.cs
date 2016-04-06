@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Backgroud_Crawler._Storage;
 using Core;
-using Core.Objects;
+using Core.Data;
 
 namespace Backgroud_Crawler.Crawling
 {
-    public class FormatCrawler
+    public class ProcessCrawler
     {
         private readonly List<CrawledLink> _crawled;
         private readonly List<Link> _links;
 
         private readonly CrawledContent _crawledContent;
 
-        public FormatCrawler(CrawledContent crawledContent)
+        public ProcessCrawler(CrawledContent crawledContent)
         {
             _crawled = new List<CrawledLink>();
             _crawledContent = crawledContent;
@@ -68,7 +69,7 @@ namespace Backgroud_Crawler.Crawling
             ToStorage.Add(_crawled, _crawledContent.Url);
             ToStorage.Add(_links);
 
-            Console.WriteLine("Formated: {0}", _crawledContent.Url);
+            Console.WriteLine("Processed: {0}", _crawledContent.Url);
         }
     }
 }

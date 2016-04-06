@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Core.Objects
+﻿namespace Core.Data
 {
     public class CrawledContent
     {

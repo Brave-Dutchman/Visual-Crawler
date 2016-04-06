@@ -1,4 +1,5 @@
-﻿using Topshelf;
+﻿using Backgroud_Crawler.Service;
+using Topshelf;
 
 namespace Backgroud_Crawler
 {

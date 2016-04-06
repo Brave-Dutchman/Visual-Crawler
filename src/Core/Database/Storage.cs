@@ -4,9 +4,9 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Core.Objects;
+using Core.Data;
 
-namespace Core
+namespace Core.Database
 {
     /// <summary>
     ///     Storage class.

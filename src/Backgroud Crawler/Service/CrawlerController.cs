@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Backgroud_Crawler.Crawling;
+using Backgroud_Crawler._Storage;
 using Core;
-using Core.Objects;
+using Core.Data;
+using Core.Database;
 
-namespace Backgroud_Crawler
+namespace Backgroud_Crawler.Service
 {
     public class CrawlerController
     {

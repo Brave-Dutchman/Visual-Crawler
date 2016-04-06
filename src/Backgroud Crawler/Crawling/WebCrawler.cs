@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
-using Core.Objects;
+using Backgroud_Crawler._Storage;
+using Core.Data;
 
 namespace Backgroud_Crawler.Crawling
 {
@@ -60,7 +60,7 @@ namespace Backgroud_Crawler.Crawling
                 }
 
                 Task.Run(() => {
-                    new FormatCrawler(new CrawledContent(url, text, host, scheme)).Format();
+                    new ProcessCrawler(new CrawledContent(url, text, host, scheme)).Format();
                 });
             }
             catch (Exception e)

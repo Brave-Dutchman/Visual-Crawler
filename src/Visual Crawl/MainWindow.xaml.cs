@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core;
-using Core.Objects;
+using Core.Data;
+using Core.Database;
 
 namespace Visual_Crawl
 {

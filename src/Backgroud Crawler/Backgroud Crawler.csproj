@@ -69,10 +69,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Crawling\FormatCrawler.cs" />
-    <Compile Include="Crawling\FromStorage.cs" />
-    <Compile Include="CrawlerController.cs" />
-    <Compile Include="Crawling\ToStorage.cs" />
+    <Compile Include="Crawling\ProcessCrawler.cs" />
+    <Compile Include="_Storage\FromStorage.cs" />
+    <Compile Include="Service\CrawlerController.cs" />
+    <Compile Include="_Storage\ToStorage.cs" />
     <Compile Include="Crawling\WebCrawler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -99,9 +99,7 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

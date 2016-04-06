@@ -71,13 +71,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\CrawledContent.cs" />
-    <Compile Include="Objects\CrawledLink.cs" />
-    <Compile Include="Objects\Link.cs" />
+    <Compile Include="Data\CrawledContent.cs" />
+    <Compile Include="Data\CrawledLink.cs" />
+    <Compile Include="Data\Link.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extends.cs" />
-    <Compile Include="Storage.cs" />
-    <Compile Include="TestData.cs" />
+    <Compile Include="Database\Storage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

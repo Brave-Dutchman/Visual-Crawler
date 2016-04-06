@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Core.Objects
+namespace Core.Data
 {
     public class CrawledLink
     {

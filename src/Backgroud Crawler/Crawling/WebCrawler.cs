@@ -60,7 +60,8 @@ namespace Backgroud_Crawler.Crawling
                     scheme = myWebResponse.ResponseUri.Scheme;
                 }
 
-                Task.Run(() => {
+                Task.Run(() => 
+                {
                     new ProcessCrawled(new CrawledContent(url, text, host, scheme)).Format();
                 });
             }

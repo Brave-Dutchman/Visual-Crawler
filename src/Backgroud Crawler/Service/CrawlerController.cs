@@ -58,12 +58,17 @@ namespace Backgroud_Crawler.Service
 
             if (!exists)
             {
-                const string url = "http://www.insidegamer.nl";
+                //const string url = "http://www.insidegamer.nl";
+                //ToStorage.Add(new List<CrawledLink> { new CrawledLink(url) }, url);
+                //ToStorage.Add(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+
+                const string url = "http://www.nu.nl";
+                Uri uri = new Uri(url);
+                
                 ToStorage.Add(new List<CrawledLink> { new CrawledLink(url) }, url);
-                ToStorage.Add(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
+                ToStorage.Add(new List<Link> { new Link(uri.Host, url, url) });
 
                 new WebCrawler().Crawler(url);
-
                 Thread.Sleep(1000);
             }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Core;
 using Core.Data;
 using Core.Database;
 

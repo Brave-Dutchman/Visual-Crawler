@@ -49,6 +49,8 @@ namespace Backgroud_Crawler.Service
                 _crawler.Stop = false;
                 StartCrawling(_crawler);
             }
+
+            Console.WriteLine("\tChecked Cpu, {0}", DateTime.Now.ToLongTimeString());
         }
 
         private void StartUp()

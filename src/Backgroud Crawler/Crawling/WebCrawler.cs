@@ -41,6 +41,7 @@ namespace Backgroud_Crawler.Crawling
                 {
                     using (Stream streamResponse = myWebResponse.GetResponseStream())
                     {
+                        // ReSharper disable once AssignNullToNotNullAttribute
                         using (StreamReader sreader = new StreamReader(streamResponse))
                         {
                             url = myWebResponse.ResponseUri.ToString();
@@ -49,7 +50,7 @@ namespace Backgroud_Crawler.Crawling
                                 url = url.Substring(0, url.Length - 1);
                             }
 
-                            Console.WriteLine("Crawled:  {0}", url); //Reads it to the end
+                            Console.WriteLine("Crawled:   {0}", url); //Reads it to the end
 
                             text = sreader.ReadToEnd();
                         }
@@ -63,9 +64,9 @@ namespace Backgroud_Crawler.Crawling
                     new ProcessCrawler(new CrawledContent(url, text, host, scheme)).Format();
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine("\t{0}:{1}", webUrl, e.Message);
+                //Console.WriteLine("\t{0}:{1}", webUrl, e.Message);
             }
         }
     }

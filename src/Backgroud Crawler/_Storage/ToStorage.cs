@@ -6,12 +6,19 @@ using Core.Database;
 
 namespace Backgroud_Crawler._Storage
 {
+    /// <summary>
+    /// Responsible for writing the data to the database
+    /// </summary>
     public static class ToStorage
     {
+        //Fields
         private static readonly List<Link> LINKS;
         private static readonly List<CrawledLink> CRAWLED_LINKS;
         private static readonly List<string> UPDATED;
 
+        /// <summary>
+        /// Constructor of ToStorage
+        /// </summary>
         static ToStorage()
         {
             UPDATED = new List<string>();
@@ -29,7 +36,7 @@ namespace Backgroud_Crawler._Storage
         }
 
         /// <summary>
-        /// Writes all the crawledlinks, updated links and links to the database
+        /// Writes all the CrawledLinks, updated Links and Links to the database
         /// </summary>
         public static void Write()
         {

@@ -5,17 +5,24 @@ using Core.Database;
 
 namespace Backgroud_Crawler._Storage
 {
+    /// <summary>
+    /// Responsible for retrieving the data from the database
+    /// </summary>
     public static class FromStorage
     {
+        //Fields
         private static Stack<CrawledLink> _linksToCrawl;
 
+        /// <summary>
+        /// Constructor of FromStorage
+        /// </summary>
         static FromStorage()
         {
             _linksToCrawl = new Stack<CrawledLink>();
         }
 
         /// <summary>
-        /// Gets the 
+        /// Gets the new Links
         /// </summary>
         public static void GetNewLinks()
         {

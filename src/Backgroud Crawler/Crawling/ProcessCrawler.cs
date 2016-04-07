@@ -6,13 +6,20 @@ using Core.Data;
 
 namespace Backgroud_Crawler.Crawling
 {
+    /// <summary>
+    /// Handles the processing of the links that have been crawled
+    /// </summary>
     public class ProcessCrawled
     {
+        //Fields
         private readonly List<CrawledLink> _crawled;
         private readonly List<Link> _links;
-
         private readonly CrawledContent _crawledContent;
 
+        /// <summary>
+        /// Constructor of ProcessCrawled
+        /// </summary>
+        /// <param name="crawledContent"></param>
         public ProcessCrawled(CrawledContent crawledContent)
         {
             _crawled = new List<CrawledLink>();

@@ -7,10 +7,18 @@ using Core.Data;
 
 namespace Backgroud_Crawler.Crawling
 {
+    /// <summary>
+    /// The WebCrawler class
+    /// Responsible for the actual crawling process
+    /// </summary>
     public class WebCrawler
     {
+        //Fields
         public bool Stop { get; set; } 
 
+        /// <summary>
+        /// Run the WebCrawler
+        /// </summary>
         public void Run()
         {
             while (!Stop)
@@ -27,6 +35,10 @@ namespace Backgroud_Crawler.Crawling
             }
         }
 
+        /// <summary>
+        /// The actual Crawler
+        /// </summary>
+        /// <param name="webUrl">String to crawl</param>
         public void Crawler(string webUrl)
         {
             string text;

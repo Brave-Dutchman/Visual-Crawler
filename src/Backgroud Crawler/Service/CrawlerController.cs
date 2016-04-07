@@ -9,14 +9,21 @@ using Core.Database;
 
 namespace Backgroud_Crawler.Service
 {
+    /// <summary>
+    /// CrawledController class
+    /// Manages the WebCrawler service
+    /// </summary>
     public class CrawlerController
     {
+        //Fields
         private static Timer _timer;
-
         private readonly PerformanceCounter _cpuCounter;
         private WebCrawler _crawler;
         private bool _isWaiting;
 
+        /// <summary>
+        /// Constructor of CrawledController
+        /// </summary>
         public CrawlerController()
         {
             _cpuCounter = new PerformanceCounter
@@ -88,11 +95,11 @@ namespace Backgroud_Crawler.Service
         }
 
         /// <summary>
-        /// Gets the current CPU height.
-        /// As per Microsofts advice first call the counter than wait 1000 ms and the call it again
+        /// Gets the current CPU usage.
+        /// As per Microsofts advice first call the counter then wait 1000 ms and the call it again
         /// This way the value will be correct
         /// </summary>
-        /// <returns>The current cpu height in %</returns>
+        /// <returns>The current cpu usage in %</returns>
         public float GetCurrentCpuUsage()
         {
             dynamic firstValue = _cpuCounter.NextValue();
@@ -117,7 +124,7 @@ namespace Backgroud_Crawler.Service
         /// <summary>
         /// Starts a new thread with the webcrawler
         /// </summary>
-        /// <param name="webCrawler"></param>
+        /// <param name="webCrawler">The WebCrawler</param>
         private static void StartCrawling(WebCrawler webCrawler)
         {
             Thread thread = new Thread(webCrawler.Run);
@@ -125,7 +132,7 @@ namespace Backgroud_Crawler.Service
         }
 
         /// <summary>
-        /// The windows service stop methods
+        /// The windows service stop method
         /// </summary>
         public void Stop()
         {

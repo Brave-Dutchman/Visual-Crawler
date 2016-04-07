@@ -3,10 +3,18 @@ using Topshelf;
 
 namespace Backgroud_Crawler
 {
+    /// <summary>
+    /// Main startup class
+    /// </summary>
     internal class Program
     {
+        /// <summary>
+        /// Main method
+        /// </summary>
+        /// <param name="args">Startup parameters</param>
         private static void Main(string[] args)
         {
+            //Run application as service
             HostFactory.Run(hostConfigurator =>
             {
                 hostConfigurator.Service<CrawlerController>(serviceConfigurator =>

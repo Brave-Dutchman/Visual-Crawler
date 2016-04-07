@@ -21,6 +21,9 @@ namespace Backgroud_Crawler.Service
         private WebCrawler _crawler;
         private bool _isWaiting;
 
+        private const int CPU_HIGH = 60;
+        private const int CPU_LOW = 20;
+
         /// <summary>
         /// Constructor of CrawledController
         /// </summary>
@@ -42,7 +45,7 @@ namespace Backgroud_Crawler.Service
         {
             float cpu = GetCurrentCpuUsage();
 
-            if (!_isWaiting && cpu > 60)
+            if (!_isWaiting && cpu > CPU_HIGH)
             {
                 _isWaiting = true;
 
@@ -50,7 +53,7 @@ namespace Backgroud_Crawler.Service
 
                 _crawler.Stop = true;
             }
-            else if (_isWaiting && cpu < 20)
+            else if (_isWaiting && cpu < CPU_LOW)
             {
                 _isWaiting = false;
 
@@ -59,10 +62,8 @@ namespace Backgroud_Crawler.Service
                 _crawler.Stop = false;
                 StartCrawling(_crawler);
             }
-            ConsoleColor oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
+
             Console.WriteLine("\tChecked Cpu, {0}", DateTime.Now.ToLongTimeString());
-            Console.ForegroundColor = oldColor;
         }
 
         /// <summary>
@@ -76,10 +77,6 @@ namespace Backgroud_Crawler.Service
 
             if (!exists)
             {
-                //const string url = "http://www.insidegamer.nl";
-                //ToStorage.Add(new List<CrawledLink> { new CrawledLink(url) }, url);
-                //ToStorage.Add(new List<Link> { new Link("www.insidegamer.nl", "http://www.insidegamer.nl", "http://www.insidegamer.nl") });
-
                 const string url = "http://www.nu.nl";
                 Uri uri = new Uri(url);
                 

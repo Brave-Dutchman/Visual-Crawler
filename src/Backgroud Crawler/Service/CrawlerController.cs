@@ -52,8 +52,10 @@ namespace Backgroud_Crawler.Service
                 _crawler.Stop = false;
                 StartCrawling(_crawler);
             }
-
+            ConsoleColor oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\tChecked Cpu, {0}", DateTime.Now.ToLongTimeString());
+            Console.ForegroundColor = oldColor;
         }
 
         /// <summary>

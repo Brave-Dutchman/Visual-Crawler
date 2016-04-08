@@ -4,10 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Visual_Crawl" mc:Ignorable="d" x:Name="ThisWindow"
-        Title="MainWindow" Height="400" Width="500" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Visual Crawl" Height="400" Width="500" WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Grid>
-
         <Grid x:Name="GrdSelect" Visibility="Visible">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBox Width="200" Text="{Binding Text, ElementName=ThisWindow}"/>
